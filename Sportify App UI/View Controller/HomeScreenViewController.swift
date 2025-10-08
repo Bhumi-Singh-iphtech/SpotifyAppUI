@@ -384,7 +384,12 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
                     Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar"),
                     Song(title: "Tera Yar Hoon Main", artist: "Neha Kakkar", imageName: "Tera Yaar Hoon Main"),
                     Song(title: "London Thumakda", artist: "Neha Kakkar", imageName: "london thumka"),
-                    Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya")
+                    Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya"),
+                    Song(title: "Desh Mere", artist: "Arijit Singh", imageName: "Desh mere"),
+                    Song(title: "Hamari Adhuri Khani", artist: "Arijit Singh", imageName: "Hamari Adhuri Khani"),
+                    Song(title: "Maan Mera", artist: "Arijit Singh", imageName: "maan mera"),
+                    Song(title: "Solumate", artist: "Arijit Singh", imageName: "Solumate"),
+                    Song(title: "Tera Yar Hoon Main", artist: "Arijit Singh", imageName: "Tera Yaar Hoon Main")
                 ]
             
             default:

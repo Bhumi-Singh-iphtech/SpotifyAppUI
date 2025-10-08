@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		187520BE2E967BF1009706B1 /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187520BD2E967BF1009706B1 /* MiniPlayerView.swift */; };
+		187520C12E96864B009706B1 /* MiniplayerViewColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187520C02E96864B009706B1 /* MiniplayerViewColor.swift */; };
 		188F3C442E86C5BA00D1DA94 /* ArtistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188F3C432E86C5BA00D1DA94 /* ArtistCell.swift */; };
 		188F3C482E86C79F00D1DA94 /* Artistmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188F3C472E86C79F00D1DA94 /* Artistmodel.swift */; };
 		18E5B97B2E8FE8DB00490A3F /* EpsiodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E5B97A2E8FE8DB00490A3F /* EpsiodeView.swift */; };
@@ -30,10 +32,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		187520BC2E96388A009706B1 /* Sportify App UI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Sportify App UI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		187520BD2E967BF1009706B1 /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
+		187520C02E96864B009706B1 /* MiniplayerViewColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniplayerViewColor.swift; sourceTree = "<group>"; };
 		188F3C432E86C5BA00D1DA94 /* ArtistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCell.swift; sourceTree = "<group>"; };
 		188F3C472E86C79F00D1DA94 /* Artistmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artistmodel.swift; sourceTree = "<group>"; };
 		18E5B97A2E8FE8DB00490A3F /* EpsiodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpsiodeView.swift; sourceTree = "<group>"; };
-		18E5B9812E8FFD9600490A3F /* Sportify App UI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "Sportify App UI.app"; path = "/Users/apple/Documents/Bhumi Projects/Sportify App UI/build/Debug-iphoneos/Sportify App UI.app"; sourceTree = "<absolute>"; };
 		18E5B9852E8FFEDA00490A3F /* Song Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Song Model.swift"; sourceTree = "<group>"; };
 		18E5B9882E8FFEEC00490A3F /* SongTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongTableViewCell.swift; sourceTree = "<group>"; };
 		18E5B98B2E8FFEF400490A3F /* StationCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StationCell.xib; sourceTree = "<group>"; };
@@ -69,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				18FE49962E8AC30100134086 /* AlbumDetailViewController.swift */,
+				187520BD2E967BF1009706B1 /* MiniPlayerView.swift */,
 				18E5B9B32E9008DB00490A3F /* HomeScreenViewController.swift */,
 			);
 			path = "View Controller";
@@ -78,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				18E5B9962E90004B00490A3F /* Hex color extension.swift */,
+				187520C02E96864B009706B1 /* MiniplayerViewColor.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -86,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				3B078E1B2E78472700BBF5BA /* Sportify App UI */,
+				187520BC2E96388A009706B1 /* Sportify App UI.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -149,7 +156,7 @@
 			);
 			name = "Sportify App UI";
 			productName = "Sportify App UI";
-			productReference = 18E5B9812E8FFD9600490A3F /* Sportify App UI.app */;
+			productReference = 187520BC2E96388A009706B1 /* Sportify App UI.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -208,6 +215,7 @@
 				18E5B9B42E9008DB00490A3F /* HomeScreenViewController.swift in Sources */,
 				3B2ADC212E7C307C00CBD6F1 /* RecentCollectionView model.swift in Sources */,
 				3B10B5762E7AEF1300CF3148 /* StationCell.swift in Sources */,
+				187520C12E96864B009706B1 /* MiniplayerViewColor.swift in Sources */,
 				18E5B9862E8FFEDA00490A3F /* Song Model.swift in Sources */,
 				188F3C442E86C5BA00D1DA94 /* ArtistCell.swift in Sources */,
 				3B2ADC232E7C309E00CBD6F1 /* RecentCollectionViewCell.swift in Sources */,
@@ -216,6 +224,7 @@
 				3B2ADC1F2E7BE6F700CBD6F1 /* Library item model.swift in Sources */,
 				3B078E1D2E78472700BBF5BA /* AppDelegate.swift in Sources */,
 				188F3C482E86C79F00D1DA94 /* Artistmodel.swift in Sources */,
+				187520BE2E967BF1009706B1 /* MiniPlayerView.swift in Sources */,
 				18E5B9892E8FFEEC00490A3F /* SongTableViewCell.swift in Sources */,
 				3B078E1F2E78472700BBF5BA /* SceneDelegate.swift in Sources */,
 				3B10B5742E7AE0BF00CF3148 /* LibraryGridFile.swift in Sources */,
