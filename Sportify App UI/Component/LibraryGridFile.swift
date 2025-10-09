@@ -52,7 +52,7 @@ class LibraryGridCell: UICollectionViewCell {
     func configure(with item: LibraryItem) {
         titleLabel.text = item.title
         
-        // Use system image as fallback if custom image not available
+      
         if let image = UIImage(named: item.imageName) {
             coverImageView.image = image
         } else {

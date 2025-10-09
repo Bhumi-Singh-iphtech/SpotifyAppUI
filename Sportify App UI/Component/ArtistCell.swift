@@ -2,7 +2,7 @@ import UIKit
 
 class ArtistCell: UICollectionViewCell {
     
-    // MARK: - UI Components
+ 
     private let artistImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -23,7 +23,7 @@ class ArtistCell: UICollectionViewCell {
         return label
     }()
     
-    // MARK: - Initialization
+  
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -59,7 +59,7 @@ class ArtistCell: UICollectionViewCell {
         ])
     }
     
-    // MARK: - Configuration
+   
     func configure(with artist: Artist) {
         artistNameLabel.text = artist.name
         
@@ -70,6 +70,7 @@ class ArtistCell: UICollectionViewCell {
             artistImageView.image = UIImage(systemName: "person.circle.fill")
             artistImageView.tintColor = .lightGray
         }
+        artistImageView.load(urlString: artist.imageName)
     }
     
     override func prepareForReuse() {

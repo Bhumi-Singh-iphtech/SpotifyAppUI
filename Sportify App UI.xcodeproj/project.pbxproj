@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		180A04E82E97BF93008F7CA4 /* iTuneResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180A04E72E97BF93008F7CA4 /* iTuneResponse.swift */; };
+		180A04F02E97C1B2008F7CA4 /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180A04EF2E97C1B2008F7CA4 /* ApiManager.swift */; };
+		180A04F32E97C26C008F7CA4 /* SongImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180A04F22E97C26C008F7CA4 /* SongImageExtension.swift */; };
 		187520BE2E967BF1009706B1 /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187520BD2E967BF1009706B1 /* MiniPlayerView.swift */; };
 		187520C12E96864B009706B1 /* MiniplayerViewColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187520C02E96864B009706B1 /* MiniplayerViewColor.swift */; };
 		188F3C442E86C5BA00D1DA94 /* ArtistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188F3C432E86C5BA00D1DA94 /* ArtistCell.swift */; };
@@ -32,6 +35,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		180A04E72E97BF93008F7CA4 /* iTuneResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTuneResponse.swift; sourceTree = "<group>"; };
+		180A04EF2E97C1B2008F7CA4 /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
+		180A04F22E97C26C008F7CA4 /* SongImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongImageExtension.swift; sourceTree = "<group>"; };
 		187520BC2E96388A009706B1 /* Sportify App UI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Sportify App UI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		187520BD2E967BF1009706B1 /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
 		187520C02E96864B009706B1 /* MiniplayerViewColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniplayerViewColor.swift; sourceTree = "<group>"; };
@@ -73,7 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				18FE49962E8AC30100134086 /* AlbumDetailViewController.swift */,
-				187520BD2E967BF1009706B1 /* MiniPlayerView.swift */,
 				18E5B9B32E9008DB00490A3F /* HomeScreenViewController.swift */,
 			);
 			path = "View Controller";
@@ -84,6 +89,8 @@
 			children = (
 				18E5B9962E90004B00490A3F /* Hex color extension.swift */,
 				187520C02E96864B009706B1 /* MiniplayerViewColor.swift */,
+				180A04EF2E97C1B2008F7CA4 /* ApiManager.swift */,
+				180A04F22E97C26C008F7CA4 /* SongImageExtension.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -121,6 +128,7 @@
 				3B2ADC202E7C307C00CBD6F1 /* RecentCollectionView model.swift */,
 				188F3C472E86C79F00D1DA94 /* Artistmodel.swift */,
 				18E5B9852E8FFEDA00490A3F /* Song Model.swift */,
+				180A04E72E97BF93008F7CA4 /* iTuneResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -135,6 +143,7 @@
 				18E5B97A2E8FE8DB00490A3F /* EpsiodeView.swift */,
 				18E5B9882E8FFEEC00490A3F /* SongTableViewCell.swift */,
 				18E5B98B2E8FFEF400490A3F /* StationCell.xib */,
+				187520BD2E967BF1009706B1 /* MiniPlayerView.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -220,8 +229,11 @@
 				188F3C442E86C5BA00D1DA94 /* ArtistCell.swift in Sources */,
 				3B2ADC232E7C309E00CBD6F1 /* RecentCollectionViewCell.swift in Sources */,
 				3B2ADC1D2E7BE6C100CBD6F1 /* Recommended Station model.swift in Sources */,
+				180A04F32E97C26C008F7CA4 /* SongImageExtension.swift in Sources */,
 				18E5B9972E90004B00490A3F /* Hex color extension.swift in Sources */,
 				3B2ADC1F2E7BE6F700CBD6F1 /* Library item model.swift in Sources */,
+				180A04E82E97BF93008F7CA4 /* iTuneResponse.swift in Sources */,
+				180A04F02E97C1B2008F7CA4 /* ApiManager.swift in Sources */,
 				3B078E1D2E78472700BBF5BA /* AppDelegate.swift in Sources */,
 				188F3C482E86C79F00D1DA94 /* Artistmodel.swift in Sources */,
 				187520BE2E967BF1009706B1 /* MiniPlayerView.swift in Sources */,

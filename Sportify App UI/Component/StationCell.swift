@@ -33,7 +33,8 @@ class StationCell: UICollectionViewCell {
         nameLabel.text = station.name
         subtitleLabel.text = station.subtitle
         singerImageView.image = UIImage(named: station.imageName)
+     
         backgroundCardView.backgroundColor = UIColor(hex: station.hexColor)
-        spotifyImageView.image = UIImage(named: "Spotify_icon") // your asset
+        spotifyImageView.image = UIImage(named: "Spotify_icon")
     }
 }

@@ -3,7 +3,7 @@ import UIKit
 class HomeScreenViewController: UIViewController {
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var epsiodeLabel: UILabel!
-    // MARK: - Outlets
+ 
     
     @IBOutlet weak var allButton: UIButton!
     @IBOutlet weak var musicButton: UIButton!
@@ -68,7 +68,7 @@ class HomeScreenViewController: UIViewController {
         Artist(name: "Arijit Singh", imageName: "arjit singh",totalDuration: "• 35 min"),
         Artist(name: "Neha Kakkar", imageName: "neha kakkar",totalDuration: "• 35 min"),
         Artist(name: "Badshah", imageName: "badshah",totalDuration: "• 35 min"),
-        Artist(name: "Taylor Swift", imageName: "taylor swift",totalDuration: "• 35 min")
+        Artist(name: "Darshal Raval", imageName: "Darshal Raval-1",totalDuration: "• 35 min")
     ]
 
     var recentItems: [LibraryItem] {
@@ -104,12 +104,12 @@ class HomeScreenViewController: UIViewController {
    
     override func viewWillAppear(_ animated: Bool) {
            super.viewWillAppear(animated)
-           // Hide navigation bar when returning to home
+         
            navigationController?.setNavigationBarHidden(true, animated: animated)
        }
        override func viewWillDisappear(_ animated: Bool) {
            super.viewWillDisappear(animated)
-           // Show navigation bar when going to detail screen
+          
            navigationController?.setNavigationBarHidden(false, animated: animated)
        }
        
@@ -346,7 +346,6 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
         let detailVC = storyboard?.instantiateViewController(withIdentifier: "AlbumDetailViewController") as! AlbumDetailViewController
 
         if collectionView == libraryCollectionView {
@@ -354,13 +353,50 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
             detailVC.albumTitle = item.title
             detailVC.albumImageName = item.imageName
             detailVC.totalDuration = item.totalDuration
-            detailVC.songs = [
-                Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
-                Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar"),
-                Song(title: "Tera Yar Hoon Main", artist: "Neha Kakkar", imageName: "Tera Yaar Hoon Main"),
-                Song(title: "London Thumakda", artist: "Neha Kakkar", imageName: "london_thumakda"),
-                Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya")
-            ]
+            
+          
+            switch item.title {
+            case "English Songs":
+                APIManager.shared.fetchSongs(for: "english pop") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+                    }
+                }
+                return
+            case "Hindi Songs":
+                APIManager.shared.fetchSongs(for: "hindi songs") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+                    }
+                }
+                return
+
+            case "Workout":
+                APIManager.shared.fetchSongs(for: "workout music") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+
+                    }
+                }
+                return
+            case "Chill Vibes":
+                APIManager.shared.fetchSongs(for: "chill music") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+                    }
+                }
+                return
+            default:
+               
+                detailVC.songs = [
+                    Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
+                    Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar")
+                ]
+            }
             
         } else if collectionView == artistsCollectionView {
             let artist = topArtists[indexPath.item]
@@ -368,148 +404,98 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
             detailVC.albumImageName = artist.imageName
             detailVC.totalDuration = artist.totalDuration
             
-            // Specific artist songs
-            switch artist.name {
-            case "Arijit Singh":
-                detailVC.songs = [
-                    Song(title: "Desh Mere", artist: "Arijit Singh", imageName: "Desh mere"),
-                    Song(title: "Hamari Adhuri Khani", artist: "Arijit Singh", imageName: "Hamari Adhuri Khani"),
-                    Song(title: "Maan Mera", artist: "Arijit Singh", imageName: "maan mera"),
-                    Song(title: "Solumate", artist: "Arijit Singh", imageName: "Solumate"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Arijit Singh", imageName: "Tera Yaar Hoon Main")
-                ]
-            case "Neha Kakkar":
-                detailVC.songs = [
-                    Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
-                    Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Neha Kakkar", imageName: "Tera Yaar Hoon Main"),
-                    Song(title: "London Thumakda", artist: "Neha Kakkar", imageName: "london thumka"),
-                    Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya"),
-                    Song(title: "Desh Mere", artist: "Arijit Singh", imageName: "Desh mere"),
-                    Song(title: "Hamari Adhuri Khani", artist: "Arijit Singh", imageName: "Hamari Adhuri Khani"),
-                    Song(title: "Maan Mera", artist: "Arijit Singh", imageName: "maan mera"),
-                    Song(title: "Solumate", artist: "Arijit Singh", imageName: "Solumate"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Arijit Singh", imageName: "Tera Yaar Hoon Main")
-                ]
-            
-            default:
-                detailVC.songs = [
-                    Song(title: "Hit 1", artist: artist.name, imageName: "hit1"),
-                    Song(title: "Hit 2", artist: artist.name, imageName: "hit2")
-                ]
+        
+            APIManager.shared.fetchSongs(for: artist.name) { songs in
+                DispatchQueue.main.async {
+                    detailVC.songs = songs
+                    self.navigationController?.pushViewController(detailVC, animated: true)
+                }
             }
-
-        }else if collectionView == stationCollectionView {
+            return
+            
+        } else if collectionView == stationCollectionView {
             let station = stations[indexPath.item]
-            detailVC.albumTitle = station.subtitle
-            detailVC.isStation = true
-            detailVC.albumTitle = station.name      // navigation bar title
+            detailVC.albumTitle = station.name
             detailVC.albumSubtitle = station.subtitle
+            detailVC.isStation = true
             detailVC.selectedStation = station
             detailVC.totalDuration = station.totalDuration
-            switch station.name {
-            case "Neha Kakkar":
-                detailVC.songs = [
-                    Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
-                    Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Neha Kakkar", imageName: "Tera Yaar Hoon Main"),
-                    Song(title: "London Thumakda", artist: "Neha Kakkar", imageName: "london thumka"),
-                    Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya")
-                ]
-            case "Vishal Mishra":
-                detailVC.songs = [
-                    Song(title: "Lambargini", artist: "Vishal Mishra", imageName: "Lambargini"),
-                    Song(title: "Dilbar", artist: "Vishal Mishra", imageName: "dilbar"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Vishal Mishra", imageName: "Tera Yaar Hoon Main"),
-                    Song(title: "London Thumakda", artist: "Vishal Mishra", imageName: "london thumka"),
-                    Song(title: "Badri Ki Dulhania", artist: "Vishal Mishra", imageName: "Badri ki dulhaniya")
-                ]
-            case "Darshan Raval":
-                detailVC.songs = [
-                    Song(title: "Lambargini", artist: "Darshal Raval", imageName: "Lambargini"),
-                    Song(title: "Dilbar", artist: "Darshal Raval", imageName: "dilbar"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Darshal Raval", imageName: "Tera Yaar Hoon Main"),
-                    Song(title: "London Thumakda", artist: "Darshal Raval", imageName: "london thumka"),
-                    Song(title: "Badri Ki Dulhania", artist: "Darshal Raval", imageName: "Badri ki dulhaniya")
-                ]
-
-            case "Atif Aslam":
-                detailVC.songs = [
-                    Song(title: "Lambargini", artist: "Atif Aslam", imageName: "Lambargini"),
-                    Song(title: "Dilbar", artist: "Atif Aslam", imageName: "dilbar"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Atif Aslam", imageName: "Tera Yaar Hoon Main"),
-                    Song(title: "London Thumakda", artist: "Atif Aslam", imageName: "london thumka"),
-                    Song(title: "Badri Ki Dulhania", artist: "Atif Aslam", imageName: "Badri ki dulhaniya")
-                ]
-
-            case "Pritam Radio":
-                detailVC.songs = [
-                    Song(title: "Lambargini", artist: "Pritam", imageName: "Lambargini"),
-                    Song(title: "Dilbar", artist: "Pritam", imageName: "dilbar"),
-                    Song(title: "Tera Yar Hoon Main", artist: "Pritam", imageName: "Tera Yaar Hoon Main"),
-                    Song(title: "London Thumakda", artist: "Pritam", imageName: "london thumka"),
-                    Song(title: "Badri Ki Dulhania", artist: "Pritam", imageName: "Badri ki dulhaniya")
-                ]
-
-            default:
-                detailVC.songs = [
-                    Song(title: "Hit 1", artist: station.name, imageName: "hit1"),
-                    Song(title: "Hit 2", artist: station.name, imageName: "hit2")
-                ]
-        }
-        }
-        else if collectionView == recentCollectionView {
+            
+       
+            APIManager.shared.fetchSongs(for: station.name) { songs in
+                DispatchQueue.main.async {
+                    detailVC.songs = songs
+                    self.navigationController?.pushViewController(detailVC, animated: true)
+                }
+            }
+            return // Return early since we're handling navigation in completion
+            
+        } else if collectionView == recentCollectionView {
             let item = recentItems[indexPath.item]
             detailVC.albumTitle = item.title
             detailVC.albumImageName = item.imageName
             detailVC.totalDuration = item.totalDuration
 
-            // Specific songs for each recent item
+
             switch item.title {
             case "English Songs":
-                detailVC.songs = [
-                    Song(title: "wanted", artist: "Hunter Hayes", imageName: "wanted"),
-                    Song(title: "Life is", artist: "Hunter Hayes", imageName: "Life is"),
-                    Song(title: "Imagination", artist: "Hunter Hayes", imageName: "imagination"),
-                    Song(title: "Apt", artist: "Hunter Hayes", imageName: "Apt"),
-                    Song(title: "just like you", artist: "Hunter Hayes", imageName: "just like you"),
-                    Song(title: "castle on hill", artist: "Hunter Hayes", imageName: "castle on hill")
-                ]
+                APIManager.shared.fetchSongs(for: "english pop") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+                    }
+                }
+                return
             case "Hindi Songs":
-                detailVC.songs = [
-                Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
-                Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar"),
-                Song(title: "Tera Yar Hoon Main", artist: "Neha Kakkar", imageName: "Tera Yaar Hoon Main"),
-                Song(title: "London Thumakda", artist: "Neha Kakkar", imageName: "london thumka"),
-                Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya")
-            ]
+                APIManager.shared.fetchSongs(for: "bollywood songs") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+                    }
+                }
+                return
             case "Workout":
-                detailVC.songs = [
-                Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
-                Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar"),
-                Song(title: "Tera Yar Hoon Main", artist: "Neha Kakkar", imageName: "Tera Yaar Hoon Main"),
-                Song(title: "London Thumakda", artist: "Neha Kakkar", imageName: "london thumka"),
-                Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya")
-            ]
+                APIManager.shared.fetchSongs(for: "workout edm") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+                    }
+                }
+                return
             case "Chill Vibes":
-                detailVC.songs = [
-                Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
-                Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar"),
-                Song(title: "Tera Yar Hoon Main", artist: "Neha Kakkar", imageName: "Tera Yaar Hoon Main"),
-                Song(title: "London Thumakda", artist: "Neha Kakkar", imageName: "london thumka"),
-                Song(title: "Badri Ki Dulhania", artist: "Neha Kakkar", imageName: "Badri ki dulhaniya")
-            ]
+                APIManager.shared.fetchSongs(for: "chill lofi") { songs in
+                    DispatchQueue.main.async {
+                        detailVC.songs = songs
+                        self.navigationController?.pushViewController(detailVC, animated: true)
+                    }
+                }
+                return
             default:
+              
                 detailVC.songs = [
                     Song(title: "Hit 1", artist: "Unknown", imageName: "hit1"),
                     Song(title: "Hit 2", artist: "Unknown", imageName: "hit2")
                 ]
             }
         }
-
-
+        
+      
         navigationController?.pushViewController(detailVC, animated: true)
     }
 
+
+    private func showLoadingIndicator() {
+        
+        print("Loading songs from iTunes...")
+    }
+
+
+    private func handleAPIError(_ error: Error) {
+        print("API Error: \(error)")
+     
+        let alert = UIAlertController(title: "Error", message: "Failed to load songs. Please try again.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true)
+    }
 
 }

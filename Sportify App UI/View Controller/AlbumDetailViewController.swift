@@ -1,4 +1,5 @@
 import UIKit
+
 class AlbumDetailViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var Searchbar: UIVisualEffectView!
@@ -9,7 +10,7 @@ class AlbumDetailViewController: UIViewController {
     @IBOutlet weak var albumTitleLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
 
-    // MARK: - Data
+ 
     var albumTitle: String?
     var albumImageName: String?
     var totalDuration: String?
@@ -18,17 +19,17 @@ class AlbumDetailViewController: UIViewController {
     var albumSubtitle: String?
     var isStation: Bool = false
     
-    // MARK: - State
+  
     private let maxImageSize: CGFloat = 180
     private let minImageSize: CGFloat = 130
     private var initialHeaderY: CGFloat = 0
     
-    // MARK: - Mini Player
     private lazy var miniPlayer = MiniPlayerView()
 
-    // MARK: - Lifecycle
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .black
         albumTitleLabel.text = albumTitle
         setupNavigationBar()
@@ -36,7 +37,7 @@ class AlbumDetailViewController: UIViewController {
         setupTableView()
         setupMiniPlayer()
         
-        // Initially hide search, sort and title
+       
         sortBar.alpha = 0
         Searchbar.alpha = 0
         view.bringSubviewToFront(playButton)
@@ -44,23 +45,41 @@ class AlbumDetailViewController: UIViewController {
         scrollView.delegate = self
         tableView.delegate = self
 
-        // Initially hide the navigation title
+       
         self.navigationItem.title = nil
         
         if let totalDuration = totalDuration {
             durationLabel.text = "\(totalDuration)"
-            
+        }
         
+        // Fetch songs
+        if let albumTitle = albumTitle {
+            APIManager.shared.fetchSongs(for: albumTitle) { [weak self] songs in
+                guard let self = self else { return }
+                
+                DispatchQueue.main.async {
+                    self.songs = songs
+                    self.tableView.reloadData()
+                    
+                    
+                    self.updateContentSize()
+                    
+                   
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.updateContentSize()
+                    }
+                }
+            }
         }
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-       
         if initialHeaderY == 0 {
             let centerX = view.frame.width / 2
             initialHeaderY = 120
+            
             // Update header frame
             albumHeaderContainer.frame = CGRect(
                 x: centerX - maxImageSize/2,
@@ -69,11 +88,23 @@ class AlbumDetailViewController: UIViewController {
                 height: maxImageSize
             )
             
-            // Update scroll view content size
-            updateScrollViewContentSize()
+            // Set initial table view frame
+            let initialTableY = albumHeaderContainer.frame.maxY + 20
+            tableView.frame = CGRect(
+                x: 0,
+                y: initialTableY,
+                width: view.frame.width,
+                height: 0
+            )
+            
+       
+            scrollView.contentSize = CGSize(
+                width: view.frame.width,
+                height: scrollView.frame.height + 1
+            )
         }
         
-        // Position mini player
+   
         positionMiniPlayer()
     }
     
@@ -92,13 +123,12 @@ class AlbumDetailViewController: UIViewController {
         let bottomInset: CGFloat = safeArea.bottom > 0 ? safeArea.bottom : 16
         
         miniPlayer.frame = CGRect(
-            x: 5,
+            x: 8,
             y: view.bounds.height - playerHeight - bottomInset,
-            width: view.bounds.width - 10,
+            width: view.bounds.width - 16,
             height: playerHeight
         )
     }
-
 
     // MARK: - Album Header
     private func setupAlbumHeader() {
@@ -158,32 +188,55 @@ class AlbumDetailViewController: UIViewController {
         tableView.isScrollEnabled = false
         tableView.isUserInteractionEnabled = true
         
-      
+        tableView.estimatedRowHeight = 70
+        tableView.rowHeight = 70
     }
     
-    private func updateScrollViewContentSize() {
-        let headerHeight = albumHeaderContainer.frame.height
-        let tableHeight = tableView.contentSize.height
+    // MARK: - Content Size Management
+    private func updateContentSize() {
+        guard !songs.isEmpty else {
+            // If no songs, set minimal content size
+            scrollView.contentSize = CGSize(
+                width: view.frame.width,
+                height: scrollView.frame.height + 1
+            )
+            return
+        }
         
-        // Calculate total content height
-        let totalContentHeight = initialHeaderY + headerHeight + tableHeight + 50
+       
+        let rowHeight: CGFloat = 70
+        let tableHeight = CGFloat(songs.count) * rowHeight
         
-        // Make sure content size is at least the scroll view's height
-        let minContentHeight = scrollView.frame.height + 1
-        
-        scrollView.contentSize = CGSize(
+      
+        let tableY = albumHeaderContainer.frame.maxY + 20
+        tableView.frame = CGRect(
+            x: 0,
+            y: tableY,
             width: view.frame.width,
-            height: max(totalContentHeight, minContentHeight)
+            height: tableHeight
         )
         
-        // Update table view frame to fit all content
-        tableView.frame.size.height = tableView.contentSize.height
+        // Calculate total content height
+        let headerHeight = albumHeaderContainer.frame.height
+        let totalContentHeight = initialHeaderY + headerHeight + tableHeight + 120
+        
+        // Update scroll view content size
+        scrollView.contentSize = CGSize(
+            width: view.frame.width,
+            height: max(totalContentHeight, scrollView.frame.height + 1)
+        )
+        
+        print("Content Updated: \(songs.count) songs, Table Height: \(tableHeight), Total Height: \(totalContentHeight)")
+        
+        // Force layout update
+        self.view.layoutIfNeeded()
     }
 }
 
+// MARK: - MiniPlayerViewDelegate
 extension AlbumDetailViewController: MiniPlayerViewDelegate {
     func miniPlayerDidTapPlayPause() {
-        // Do nothing or add basic functionality
+        
     }
     
     func miniPlayerDidTapClose() {
@@ -191,17 +244,18 @@ extension AlbumDetailViewController: MiniPlayerViewDelegate {
     }
     
     func miniPlayerDidTapExpand() {
-        // Do nothing
+    
     }
     
     func miniPlayerDidTapDevice() {
-        // Do nothing
+       
     }
     
     func miniPlayerDidTapCreate() {
-        // Do nothing
+       
     }
 }
+
 // MARK: - TableView Delegate & DataSource
 extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     
@@ -216,14 +270,14 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource,
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
         return cell
-       
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let song = songs[indexPath.row]
-        let image = UIImage(named: song.imageName)
         
-        miniPlayer.configure(with: image, title: song.title, subtitle: song.artist)
+        // Configure mini player with song data
+        miniPlayer.configure(with: song.imageName, title: song.title, subtitle: song.artist)
+        miniPlayer.setPlaybackState(isPlaying: true)
         miniPlayer.show()
         
         // Deselect row
@@ -241,7 +295,7 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource,
         
         let scrollOffset = scrollView.contentOffset.y
         
-        // ✅ SHRINK/GROW HEADER BASED ON SCROLL
+        // Shrink/grow header based on scroll
         let newSize: CGFloat
         if scrollOffset > 0 {
             // Scrolling up - shrink the image
@@ -255,13 +309,13 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource,
         
         // Update frame while keeping it centered
         albumHeaderContainer.frame = CGRect(
-            x: centerX - newSize/2, // Always centered horizontally
-            y: initialHeaderY,      // Same Y position
+            x: centerX - newSize/2,
+            y: initialHeaderY,
             width: newSize,
             height: newSize
         )
         
-        // ✅ UPDATE STATION CELL CONTENT PROPERLY
+        // Update station cell content properly
         if let stationCell = albumHeaderContainer.subviews.first as? StationCell {
             stationCell.frame = albumHeaderContainer.bounds
             
@@ -299,24 +353,6 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource,
             UIView.animate(withDuration: 0.2) {
                 self.Searchbar.alpha = 0
                 self.sortBar.alpha = 0
-            }
-        }
-    }
-    
-    // ✅ UPDATE TABLE VIEW HEIGHT WHEN DATA CHANGES
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // Ensure table view height is updated after data is loaded
-        DispatchQueue.main.async {
-            self.updateScrollViewContentSize()
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // Update content size when all cells are about to be displayed
-        if indexPath.row == songs.count - 1 {
-            DispatchQueue.main.async {
-                self.updateScrollViewContentSize()
             }
         }
     }

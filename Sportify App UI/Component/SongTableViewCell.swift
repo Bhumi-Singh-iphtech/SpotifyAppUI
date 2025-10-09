@@ -28,6 +28,7 @@
             titleLabel.text = song.title
             artistLabel.text = song.artist
             moreTapAction = action
+            songImageView.load(urlString: song.imageName)
         }
         
         override func prepareForReuse() {

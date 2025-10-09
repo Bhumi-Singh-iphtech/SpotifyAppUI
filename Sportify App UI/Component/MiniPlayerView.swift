@@ -7,8 +7,9 @@ protocol MiniPlayerViewDelegate: AnyObject {
     func miniPlayerDidTapDevice()
     func miniPlayerDidTapCreate()
 }
+
 class MiniPlayerView: UIView {
-    // MARK: - UI Components
+ 
     private let containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 10
@@ -37,7 +38,7 @@ class MiniPlayerView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -50,7 +51,6 @@ class MiniPlayerView: UIView {
         return label
     }()
     
-   
     private let deviceButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "iphone"), for: .normal)
@@ -91,12 +91,14 @@ class MiniPlayerView: UIView {
         super.init(frame: frame)
         setupView()
         setupGestures()
+        setupButtonActions()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
         setupGestures()
+        setupButtonActions()
     }
     
     // MARK: - Setup
@@ -107,7 +109,7 @@ class MiniPlayerView: UIView {
         // Add background view
         containerView.addSubview(backgroundView)
         
-        // Add content - ADD LABELS DIRECTLY
+        // Add content
         containerView.addSubview(imageView)
         containerView.addSubview(titleLabel)
         containerView.addSubview(subtitleLabel)
@@ -143,7 +145,7 @@ class MiniPlayerView: UIView {
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: buttonsStackView.leadingAnchor, constant: -16),
             titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
             
-            // Subtitle label - POSITION BELOW TITLE
+            // Subtitle label
             subtitleLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 12),
             subtitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: buttonsStackView.leadingAnchor, constant: -16),
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
@@ -162,27 +164,58 @@ class MiniPlayerView: UIView {
             playButton.widthAnchor.constraint(equalToConstant: 24),
             playButton.heightAnchor.constraint(equalToConstant: 24)
         ])
+     
     }
     
     private func setupGestures() {
         let playTap = UITapGestureRecognizer(target: self, action: #selector(playPauseTapped))
         playButton.addGestureRecognizer(playTap)
+        
+        // Add tap gesture to expand when tapping on the mini player
+        let expandTap = UITapGestureRecognizer(target: self, action: #selector(expandTapped))
+        containerView.addGestureRecognizer(expandTap)
     }
     
-    // MARK: - Public Methods
-    func configure(with image: UIImage?, title: String, subtitle: String? = nil) {
-        imageView.image = image
+    private func setupButtonActions() {
+        deviceButton.addTarget(self, action: #selector(deviceTapped), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(createTapped), for: .touchUpInside)
+    }
+    
+  
+    func configure(with imageUrl: String, title: String, subtitle: String? = nil) {
         titleLabel.text = title
         subtitleLabel.text = subtitle
         
+        // Load image from URL
+        imageView.load(urlString: imageUrl) { [weak self] loadedImage in
+            guard let self = self, let image = loadedImage else {
+                return
+            }
+            
+            
+            self.setBackgroundColor(from: image)
+        }
+    }
+
+    func configure(with image: UIImage?, title: String, subtitle: String? = nil) {
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+        imageView.image = image
+        
         // Set background color based on image
         if let image = image {
-            let dominantColor = image.averageColor() ?? .darkGray
-            backgroundView.backgroundColor = dominantColor
+            setBackgroundColor(from: image)
         }
-        
-        // Set play button image based on state
-        updatePlayButtonImage()
+    }
+
+    private func setBackgroundColor(from image: UIImage) {
+   
+        if let dominantColor = image.dominantColor() {
+            backgroundView.backgroundColor = dominantColor
+        } else if let averageColor = image.averageColor() {
+            backgroundView.backgroundColor = averageColor
+        }
+      
     }
     
     func show() {
@@ -205,10 +238,9 @@ class MiniPlayerView: UIView {
     }
     
     private func updatePlayButtonImage() {
-        let playImage = UIImage(systemName: isPlaying ? "play.fill" : "pause.fill")
+        let playImage = UIImage(systemName: isPlaying ? "pause.fill" : "play.fill")
         playButton.setImage(playImage, for: .normal)
         playButton.tintColor = .white
-        playButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
     }
     
     // MARK: - Actions
@@ -216,5 +248,17 @@ class MiniPlayerView: UIView {
         isPlaying.toggle()
         setPlaybackState(isPlaying: isPlaying)
         delegate?.miniPlayerDidTapPlayPause()
+    }
+    
+    @objc private func deviceTapped() {
+        delegate?.miniPlayerDidTapDevice()
+    }
+    
+    @objc private func createTapped() {
+        delegate?.miniPlayerDidTapCreate()
+    }
+    
+    @objc private func expandTapped() {
+        delegate?.miniPlayerDidTapExpand()
     }
 }
