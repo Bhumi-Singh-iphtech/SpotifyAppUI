@@ -31,7 +31,7 @@ class RecentCollectionViewCell: UICollectionViewCell {
     
     func configure(with item: LibraryItem) {
         titleLabel.text = item.title
-        subtitleLabel.text = "Playlist" // Fixed subtitle
+        subtitleLabel.text = "Playlist"
         
         if let image = UIImage(named: item.imageName) {
             coverImageView.image = image

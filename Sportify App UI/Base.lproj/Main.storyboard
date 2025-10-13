@@ -337,12 +337,11 @@
                                 <constraints>
                                     <constraint firstItem="0QA-6k-sIJ" firstAttribute="top" secondItem="FoI-IA-tjw" secondAttribute="top" id="FSh-DD-pxJ"/>
                                     <constraint firstItem="0QA-6k-sIJ" firstAttribute="leading" secondItem="gKm-hE-BmV" secondAttribute="leading" id="PZN-Nd-PMs"/>
-                                    <constraint firstItem="0QA-6k-sIJ" firstAttribute="top" secondItem="w9F-9N-Enb" secondAttribute="top" id="Pix-Iq-Ea3"/>
                                     <constraint firstItem="0QA-6k-sIJ" firstAttribute="width" secondItem="w9F-9N-Enb" secondAttribute="width" id="ZNJ-Hc-7ud"/>
                                     <constraint firstItem="0QA-6k-sIJ" firstAttribute="trailing" secondItem="gKm-hE-BmV" secondAttribute="trailing" id="aTi-Rd-Z3H"/>
                                     <constraint firstItem="0QA-6k-sIJ" firstAttribute="trailing" secondItem="w9F-9N-Enb" secondAttribute="trailing" id="acv-1j-2kP"/>
-                                    <constraint firstAttribute="bottom" secondItem="0QA-6k-sIJ" secondAttribute="bottom" constant="2" id="gZU-B9-fQz"/>
-                                    <constraint firstItem="0QA-6k-sIJ" firstAttribute="leading" secondItem="w9F-9N-Enb" secondAttribute="leading" id="q1a-HF-8ot"/>
+                                    <constraint firstAttribute="bottom" secondItem="0QA-6k-sIJ" secondAttribute="bottom" id="gZU-B9-fQz"/>
+                                    <constraint firstItem="0QA-6k-sIJ" firstAttribute="leading" secondItem="gKm-hE-BmV" secondAttribute="leading" id="q1a-HF-8ot"/>
                                 </constraints>
                                 <viewLayoutGuide key="contentLayoutGuide" id="gKm-hE-BmV"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="w9F-9N-Enb"/>

@@ -2,7 +2,6 @@
 import UIKit
 class HomeScreenViewController: UIViewController {
     @IBOutlet weak var contentView: UIView!
-    @IBOutlet weak var epsiodeLabel: UILabel!
  
     
     @IBOutlet weak var allButton: UIButton!
@@ -353,8 +352,7 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
             detailVC.albumTitle = item.title
             detailVC.albumImageName = item.imageName
             detailVC.totalDuration = item.totalDuration
-            
-          
+
             switch item.title {
             case "English Songs":
                 APIManager.shared.fetchSongs(for: "english pop") { songs in
@@ -372,13 +370,11 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
                     }
                 }
                 return
-
             case "Workout":
                 APIManager.shared.fetchSongs(for: "workout music") { songs in
                     DispatchQueue.main.async {
                         detailVC.songs = songs
                         self.navigationController?.pushViewController(detailVC, animated: true)
-
                     }
                 }
                 return
@@ -391,20 +387,17 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
                 }
                 return
             default:
-               
                 detailVC.songs = [
-                    Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini"),
-                    Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar")
+                    Song(title: "Lambargini", artist: "Neha Kakkar", imageName: "Lambargini", previewUrl: ""),
+                    Song(title: "Dilbar", artist: "Neha Kakkar", imageName: "dilbar", previewUrl: "")
                 ]
             }
-            
         } else if collectionView == artistsCollectionView {
             let artist = topArtists[indexPath.item]
             detailVC.albumTitle = artist.name
             detailVC.albumImageName = artist.imageName
             detailVC.totalDuration = artist.totalDuration
-            
-        
+
             APIManager.shared.fetchSongs(for: artist.name) { songs in
                 DispatchQueue.main.async {
                     detailVC.songs = songs
@@ -412,7 +405,6 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
                 }
             }
             return
-            
         } else if collectionView == stationCollectionView {
             let station = stations[indexPath.item]
             detailVC.albumTitle = station.name
@@ -420,22 +412,19 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
             detailVC.isStation = true
             detailVC.selectedStation = station
             detailVC.totalDuration = station.totalDuration
-            
-       
+
             APIManager.shared.fetchSongs(for: station.name) { songs in
                 DispatchQueue.main.async {
                     detailVC.songs = songs
                     self.navigationController?.pushViewController(detailVC, animated: true)
                 }
             }
-            return // Return early since we're handling navigation in completion
-            
+            return
         } else if collectionView == recentCollectionView {
             let item = recentItems[indexPath.item]
             detailVC.albumTitle = item.title
             detailVC.albumImageName = item.imageName
             detailVC.totalDuration = item.totalDuration
-
 
             switch item.title {
             case "English Songs":
@@ -471,18 +460,16 @@ extension HomeScreenViewController: UICollectionViewDataSource, UICollectionView
                 }
                 return
             default:
-              
                 detailVC.songs = [
-                    Song(title: "Hit 1", artist: "Unknown", imageName: "hit1"),
-                    Song(title: "Hit 2", artist: "Unknown", imageName: "hit2")
+                    Song(title: "Hit 1", artist: "Unknown", imageName: "hit1", previewUrl: ""),
+                    Song(title: "Hit 2", artist: "Unknown", imageName: "hit2", previewUrl: "")
                 ]
             }
         }
-        
-      
+
+        // Fallback push if not returned early
         navigationController?.pushViewController(detailVC, animated: true)
     }
-
 
     private func showLoadingIndicator() {
         

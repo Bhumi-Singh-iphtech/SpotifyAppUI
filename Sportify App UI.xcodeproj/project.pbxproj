@@ -20,6 +20,7 @@
 		18E5B98C2E8FFEF400490A3F /* StationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18E5B98B2E8FFEF400490A3F /* StationCell.xib */; };
 		18E5B9972E90004B00490A3F /* Hex color extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E5B9962E90004B00490A3F /* Hex color extension.swift */; };
 		18E5B9B42E9008DB00490A3F /* HomeScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E5B9B32E9008DB00490A3F /* HomeScreenViewController.swift */; };
+		18EBE52D2E9CBCF200F4ECD8 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EBE52C2E9CBCF200F4ECD8 /* MusicPlayer.swift */; };
 		18FE49972E8AC30100134086 /* AlbumDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FE49962E8AC30100134086 /* AlbumDetailViewController.swift */; };
 		3B078E1D2E78472700BBF5BA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B078E1C2E78472700BBF5BA /* AppDelegate.swift */; };
 		3B078E1F2E78472700BBF5BA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B078E1E2E78472700BBF5BA /* SceneDelegate.swift */; };
@@ -49,6 +50,7 @@
 		18E5B98B2E8FFEF400490A3F /* StationCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StationCell.xib; sourceTree = "<group>"; };
 		18E5B9962E90004B00490A3F /* Hex color extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Hex color extension.swift"; sourceTree = "<group>"; };
 		18E5B9B32E9008DB00490A3F /* HomeScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenViewController.swift; sourceTree = "<group>"; };
+		18EBE52C2E9CBCF200F4ECD8 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 		18FE49962E8AC30100134086 /* AlbumDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumDetailViewController.swift; sourceTree = "<group>"; };
 		3B078E1C2E78472700BBF5BA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3B078E1E2E78472700BBF5BA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 				187520C02E96864B009706B1 /* MiniplayerViewColor.swift */,
 				180A04EF2E97C1B2008F7CA4 /* ApiManager.swift */,
 				180A04F22E97C26C008F7CA4 /* SongImageExtension.swift */,
+				18EBE52C2E9CBCF200F4ECD8 /* MusicPlayer.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -220,6 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18EBE52D2E9CBCF200F4ECD8 /* MusicPlayer.swift in Sources */,
 				18E5B97B2E8FE8DB00490A3F /* EpsiodeView.swift in Sources */,
 				18E5B9B42E9008DB00490A3F /* HomeScreenViewController.swift in Sources */,
 				3B2ADC212E7C307C00CBD6F1 /* RecentCollectionView model.swift in Sources */,

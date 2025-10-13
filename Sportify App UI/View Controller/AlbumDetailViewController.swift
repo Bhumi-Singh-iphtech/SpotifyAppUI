@@ -18,6 +18,9 @@ class AlbumDetailViewController: UIViewController {
     var selectedStation: Station?
     var albumSubtitle: String?
     var isStation: Bool = false
+    private var currentSongPreviewUrl: String?
+    private var isPlaying = false
+
     
   
     private let maxImageSize: CGFloat = 180
@@ -228,7 +231,7 @@ class AlbumDetailViewController: UIViewController {
         
         print("Content Updated: \(songs.count) songs, Table Height: \(tableHeight), Total Height: \(totalContentHeight)")
         
-        // Force layout update
+      
         self.view.layoutIfNeeded()
     }
 }
@@ -237,10 +240,27 @@ class AlbumDetailViewController: UIViewController {
 extension AlbumDetailViewController: MiniPlayerViewDelegate {
     func miniPlayerDidTapPlayPause() {
         
+        guard let urlString = currentSongPreviewUrl, !urlString.isEmpty else {
+            print("No song URL available to play")
+            return
+        }
+
+        // Toggle playback
+        if isPlaying {
+            MusicPlayer.shared.pause()
+            miniPlayer.setPlaybackState(isPlaying: false)
+            isPlaying = false
+        } else {
+            MusicPlayer.shared.play(urlString: urlString)
+            miniPlayer.setPlaybackState(isPlaying: true)
+            isPlaying = true
+        }
     }
+
     
     func miniPlayerDidTapClose() {
         miniPlayer.hide()
+        MusicPlayer.shared.pause()
     }
     
     func miniPlayerDidTapExpand() {
@@ -272,16 +292,23 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource,
         return cell
     }
     
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let song = songs[indexPath.row]
         
-        // Configure mini player with song data
+        // Store current song URL
+        currentSongPreviewUrl = song.previewUrl
+        
+        // Configure mini player
         miniPlayer.configure(with: song.imageName, title: song.title, subtitle: song.artist)
         miniPlayer.setPlaybackState(isPlaying: true)
         miniPlayer.show()
         
-        // Deselect row
+        // Play the song
+        MusicPlayer.shared.play(urlString: song.previewUrl)
+        
         tableView.deselectRow(at: indexPath, animated: true)
+        isPlaying = true 
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -50,7 +50,6 @@ class MiniPlayerView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
     private let deviceButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "iphone"), for: .normal)
@@ -262,3 +261,4 @@ class MiniPlayerView: UIView {
         delegate?.miniPlayerDidTapExpand()
     }
 }
+
