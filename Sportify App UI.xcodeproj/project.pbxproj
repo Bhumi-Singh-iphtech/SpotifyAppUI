@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1801C2552E9E617A006D5760 /* SongOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1801C2542E9E617A006D5760 /* SongOptions.swift */; };
+		1801C2582E9E6538006D5760 /* NavigationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1801C2572E9E6538006D5760 /* NavigationHelper.swift */; };
+		1801C25B2E9E7B5B006D5760 /* MusicDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1801C25A2E9E7B5B006D5760 /* MusicDataManager.swift */; };
 		180A04E82E97BF93008F7CA4 /* iTuneResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180A04E72E97BF93008F7CA4 /* iTuneResponse.swift */; };
 		180A04F02E97C1B2008F7CA4 /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180A04EF2E97C1B2008F7CA4 /* ApiManager.swift */; };
 		180A04F32E97C26C008F7CA4 /* SongImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180A04F22E97C26C008F7CA4 /* SongImageExtension.swift */; };
@@ -36,6 +39,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1801C2542E9E617A006D5760 /* SongOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongOptions.swift; sourceTree = "<group>"; };
+		1801C2572E9E6538006D5760 /* NavigationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHelper.swift; sourceTree = "<group>"; };
+		1801C25A2E9E7B5B006D5760 /* MusicDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicDataManager.swift; sourceTree = "<group>"; };
 		180A04E72E97BF93008F7CA4 /* iTuneResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iTuneResponse.swift; sourceTree = "<group>"; };
 		180A04EF2E97C1B2008F7CA4 /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
 		180A04F22E97C26C008F7CA4 /* SongImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongImageExtension.swift; sourceTree = "<group>"; };
@@ -94,6 +100,9 @@
 				180A04EF2E97C1B2008F7CA4 /* ApiManager.swift */,
 				180A04F22E97C26C008F7CA4 /* SongImageExtension.swift */,
 				18EBE52C2E9CBCF200F4ECD8 /* MusicPlayer.swift */,
+				1801C2542E9E617A006D5760 /* SongOptions.swift */,
+				1801C2572E9E6538006D5760 /* NavigationHelper.swift */,
+				1801C25A2E9E7B5B006D5760 /* MusicDataManager.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -224,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				18EBE52D2E9CBCF200F4ECD8 /* MusicPlayer.swift in Sources */,
+				1801C2582E9E6538006D5760 /* NavigationHelper.swift in Sources */,
 				18E5B97B2E8FE8DB00490A3F /* EpsiodeView.swift in Sources */,
 				18E5B9B42E9008DB00490A3F /* HomeScreenViewController.swift in Sources */,
 				3B2ADC212E7C307C00CBD6F1 /* RecentCollectionView model.swift in Sources */,
@@ -235,6 +245,7 @@
 				3B2ADC1D2E7BE6C100CBD6F1 /* Recommended Station model.swift in Sources */,
 				180A04F32E97C26C008F7CA4 /* SongImageExtension.swift in Sources */,
 				18E5B9972E90004B00490A3F /* Hex color extension.swift in Sources */,
+				1801C2552E9E617A006D5760 /* SongOptions.swift in Sources */,
 				3B2ADC1F2E7BE6F700CBD6F1 /* Library item model.swift in Sources */,
 				180A04E82E97BF93008F7CA4 /* iTuneResponse.swift in Sources */,
 				180A04F02E97C1B2008F7CA4 /* ApiManager.swift in Sources */,
@@ -245,6 +256,7 @@
 				3B078E1F2E78472700BBF5BA /* SceneDelegate.swift in Sources */,
 				3B10B5742E7AE0BF00CF3148 /* LibraryGridFile.swift in Sources */,
 				18FE49972E8AC30100134086 /* AlbumDetailViewController.swift in Sources */,
+				1801C25B2E9E7B5B006D5760 /* MusicDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

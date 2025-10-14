@@ -284,14 +284,29 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource,
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SongCell", for: indexPath) as! SongTableViewCell
+        // Dequeue cell safely
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SongCell", for: indexPath) as? SongTableViewCell else {
+            return UITableViewCell()
+        }
+        
         let song = songs[indexPath.row]
-        cell.configure(with: song) { print("More tapped for song: \(song.title)") }
+        
+        // Configure the cell with closure
+        cell.configure(with: song) { [weak self] in
+            self?.SongOptionsBottomSheet(for: song)
+            // Or call your method: self.didTapMoreButton(for: song)
+        }
+        
+        // Additional cell styling
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
+        
         return cell
     }
-    
+    private func SongOptionsBottomSheet(for song: Song) {
+        let bottomSheet = SongOptions(song: song)
+        present(bottomSheet, animated: true, completion: nil)
+    }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let song = songs[indexPath.row]
