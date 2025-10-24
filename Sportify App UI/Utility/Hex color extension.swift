@@ -1,11 +1,4 @@
-//
-//  Hex color extension.swift
-//  Sportify App UI
-//
-//  Created by iPHTech 15 on 19/09/25.
-//
 
-import Foundation
 import UIKit
 extension UIColor {
     convenience init(hex: String) {

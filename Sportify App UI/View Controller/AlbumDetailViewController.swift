@@ -10,7 +10,9 @@ class AlbumDetailViewController: UIViewController {
     @IBOutlet weak var albumTitleLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
 
- 
+    @IBOutlet weak var SearchHeight: NSLayoutConstraint!
+    
+    @IBOutlet weak var SortHeight: NSLayoutConstraint!
     var albumTitle: String?
     var albumImageName: String?
     var totalDuration: String?
@@ -20,54 +22,78 @@ class AlbumDetailViewController: UIViewController {
     var isStation: Bool = false
     private var currentSongPreviewUrl: String?
     private var isPlaying = false
+    private var lyricsPopupView: LyricsPopupView?
 
-    
-  
     private let maxImageSize: CGFloat = 180
     private let minImageSize: CGFloat = 130
     private var initialHeaderY: CGFloat = 0
     
+    // MARK: - Header Back Button (positioned on side of screen)
+    private let headerBackButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "arrow.left"), for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = .clear
+        button.layer.cornerRadius = 20
+        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        button.alpha = 1
+        return button
+    }()
+
+    // MARK: - Gradient Background
+    private let gradientLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.black.cgColor
+        ]
+        layer.locations = [0.0, 0.8]
+        return layer
+    }()
+
     private lazy var miniPlayer = MiniPlayerView()
 
- 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .black
+        // Initially collapse
+        SearchHeight.constant = 0
+        SortHeight.constant = 0
+        Searchbar.alpha = 0
+        sortBar.alpha = 0
+        
+        view.backgroundColor = .clear
+        setupGradientBackground()
+        forceTransparentBackgrounds()
+        
         albumTitleLabel.text = albumTitle
         setupNavigationBar()
         setupAlbumHeader()
         setupTableView()
         setupMiniPlayer()
         
-       
-        sortBar.alpha = 0
-        Searchbar.alpha = 0
+        // Add back button to main view (not album header)
+        setupHeaderBackButton()
+        
         view.bringSubviewToFront(playButton)
         
         scrollView.delegate = self
         tableView.delegate = self
 
-       
         self.navigationItem.title = nil
         
         if let totalDuration = totalDuration {
             durationLabel.text = "\(totalDuration)"
         }
         
-        // Fetch songs
         if let albumTitle = albumTitle {
             APIManager.shared.fetchSongs(for: albumTitle) { [weak self] songs in
                 guard let self = self else { return }
-                
                 DispatchQueue.main.async {
                     self.songs = songs
                     self.tableView.reloadData()
-                    
-                    
                     self.updateContentSize()
                     
-                   
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         self.updateContentSize()
                     }
@@ -76,22 +102,40 @@ class AlbumDetailViewController: UIViewController {
         }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let navBar = navigationController?.navigationBar else { return }
+
+        // Hide nav bar initially
+        navigationController?.setNavigationBarHidden(true, animated: false)
+
+        // Make nav bar transparent
+        navBar.setBackgroundImage(UIImage(), for: .default)
+        navBar.shadowImage = UIImage()
+        navBar.isTranslucent = true
+        navBar.tintColor = .clear
+        navBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         if initialHeaderY == 0 {
             let centerX = view.frame.width / 2
-            initialHeaderY = 120
-            
-            // Update header frame
+            initialHeaderY = 0
             albumHeaderContainer.frame = CGRect(
                 x: centerX - maxImageSize/2,
-                y: initialHeaderY,
+                y: 0,
                 width: maxImageSize,
                 height: maxImageSize
             )
             
-            // Set initial table view frame
             let initialTableY = albumHeaderContainer.frame.maxY + 20
             tableView.frame = CGRect(
                 x: 0,
@@ -100,16 +144,112 @@ class AlbumDetailViewController: UIViewController {
                 height: 0
             )
             
-       
             scrollView.contentSize = CGSize(
                 width: view.frame.width,
                 height: scrollView.frame.height + 1
             )
         }
         
-   
+        gradientLayer.frame = view.bounds
         positionMiniPlayer()
+        
+        // Position back button in top-left corner of screen
+        updateHeaderBackButtonPosition()
     }
+
+    // MARK: - Back Button Setup (positioned on side)
+    private func setupHeaderBackButton() {
+        view.addSubview(headerBackButton)
+        headerBackButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        
+        // Position in top-left corner with safe area consideration
+        let safeAreaTop = view.safeAreaInsets.top
+        let buttonY = max(16, safeAreaTop) // At least 16 points from top, or safe area
+        headerBackButton.frame = CGRect(x: 16, y: buttonY, width: 40, height: 40)
+        headerBackButton.alpha = 1
+        
+        // Ensure it's above other views
+        view.bringSubviewToFront(headerBackButton)
+    }
+    
+    private func updateHeaderBackButtonPosition() {
+        let safeAreaTop = view.safeAreaInsets.top
+        let buttonY = max(16, safeAreaTop)
+        headerBackButton.frame = CGRect(x: 16, y: buttonY, width: 40, height: 40)
+        
+        // Always keep it on top
+        view.bringSubviewToFront(headerBackButton)
+    }
+
+    // MARK: - Gradient Background Setup
+    private func setupGradientBackground() {
+        gradientLayer.removeFromSuperlayer()
+        gradientLayer.locations = [0.0, 0.7]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+
+        if let albumImageName = albumImageName,
+           let image = UIImage(named: albumImageName),
+           let dominantColor = image.dominantColor() {
+            // Use dominant color from album image
+            gradientLayer.colors = [
+                dominantColor.withAlphaComponent(1.0).cgColor,
+                UIColor.black.cgColor
+            ]
+            self.updateNavigationBarColor(with: dominantColor)
+        } else {
+            // Fallback to neutral dark gradient
+            gradientLayer.colors = [
+                UIColor.black.withAlphaComponent(0.0).cgColor,
+                UIColor.black.cgColor
+            ]
+            self.updateNavigationBarColor(with: UIColor.black)
+        }
+
+        view.layer.insertSublayer(gradientLayer, at: 0)
+        gradientLayer.frame = view.bounds
+    }
+
+    
+    private func forceTransparentBackgrounds() {
+        scrollView.backgroundColor = .clear
+        tableView.backgroundColor = .clear
+        albumHeaderContainer.backgroundColor = .clear
+        Searchbar.alpha = 0.7
+        sortBar.alpha = 0.7
+        
+        for subview in scrollView.subviews {
+            if subview != tableView && subview != albumHeaderContainer {
+                subview.backgroundColor = .clear
+            }
+        }
+    }
+
+    // MARK: - Fix: Update navigation bar color
+    private func updateNavigationBarColor(with color: UIColor) {
+        navigationController?.navigationBar.barTintColor = color
+        navigationController?.navigationBar.backgroundColor = color
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+    }
+
+    // MARK: - Lyrics Popup
+    private func showLyricsPopup(for song: Song) {
+        headerBackButton.isHidden = true
+        // Create popup if it doesn't exist
+        if lyricsPopupView == nil {
+            lyricsPopupView = LyricsPopupView()
+            lyricsPopupView?.dismissHandler = { [weak self] in
+                self?.lyricsPopupView = nil
+            }
+        }
+        
+        // Show the popup; it will handle its own background color
+        lyricsPopupView?.show(in: self.view, with: song, from: self)
+    }
+
     
     // MARK: - Mini Player Setup
     private func setupMiniPlayer() {
@@ -133,12 +273,13 @@ class AlbumDetailViewController: UIViewController {
         )
     }
 
-    // MARK: - Album Header
     private func setupAlbumHeader() {
         albumHeaderContainer.backgroundColor = .clear
-        
+
         if let station = selectedStation,
            let cell = Bundle.main.loadNibNamed("StationCell", owner: nil, options: nil)?.first as? StationCell {
+
+            // Set up cell
             cell.frame = albumHeaderContainer.bounds
             cell.configure(with: station)
             cell.backgroundColor = .clear
@@ -146,6 +287,23 @@ class AlbumDetailViewController: UIViewController {
             cell.layer.cornerRadius = 12
             cell.clipsToBounds = true
             albumHeaderContainer.addSubview(cell)
+
+            // Delay gradient update until image is ready
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self,
+                      let image = cell.singerImageView.image,
+                      let dominantColor = image.dominantColor() else { return }
+
+                // Update gradient
+                self.gradientLayer.colors = [
+                    dominantColor.withAlphaComponent(1.0).cgColor,
+                    UIColor.black.cgColor
+                ]
+
+                // Update nav bar color
+                self.updateNavigationBarColor(with: dominantColor)
+            }
+
         } else if let albumImageName = albumImageName {
             let imageView = UIImageView(frame: albumHeaderContainer.bounds)
             imageView.image = UIImage(named: albumImageName)
@@ -153,10 +311,22 @@ class AlbumDetailViewController: UIViewController {
             imageView.clipsToBounds = true
             imageView.layer.cornerRadius = 12
             albumHeaderContainer.addSubview(imageView)
+
+            // Delay gradient update for album image
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self,
+                      let image = imageView.image,
+                      let dominantColor = image.dominantColor() else { return }
+
+                self.gradientLayer.colors = [
+                    dominantColor.withAlphaComponent(1.0).cgColor,
+                    UIColor.black.cgColor
+                ]
+                self.updateNavigationBarColor(with: dominantColor)
+            }
         }
     }
 
-    // MARK: - Navigation
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.tintColor = .white
@@ -164,7 +334,8 @@ class AlbumDetailViewController: UIViewController {
             .foregroundColor: UIColor.white,
             .font: UIFont.boldSystemFont(ofSize: 20)
         ]
-
+        
+        navigationItem.title = albumTitle
         let backButton = UIBarButtonItem(
             image: UIImage(systemName: "arrow.left"),
             style: .plain,
@@ -173,15 +344,12 @@ class AlbumDetailViewController: UIViewController {
         )
         backButton.tintColor = .white
         navigationItem.leftBarButtonItem = backButton
-        
-        navigationItem.title = nil
     }
 
     @objc private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
 
-    // MARK: - Table View
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -195,43 +363,20 @@ class AlbumDetailViewController: UIViewController {
         tableView.rowHeight = 70
     }
     
-    // MARK: - Content Size Management
     private func updateContentSize() {
         guard !songs.isEmpty else {
-            // If no songs, set minimal content size
-            scrollView.contentSize = CGSize(
-                width: view.frame.width,
-                height: scrollView.frame.height + 1
-            )
+            scrollView.contentSize = CGSize(width: view.frame.width, height: scrollView.frame.height + 1)
             return
         }
-        
-       
         let rowHeight: CGFloat = 70
         let tableHeight = CGFloat(songs.count) * rowHeight
-        
-      
         let tableY = albumHeaderContainer.frame.maxY + 20
-        tableView.frame = CGRect(
-            x: 0,
-            y: tableY,
-            width: view.frame.width,
-            height: tableHeight
-        )
+        tableView.frame = CGRect(x: 0, y: tableY, width: view.frame.width, height: tableHeight)
         
-        // Calculate total content height
         let headerHeight = albumHeaderContainer.frame.height
         let totalContentHeight = initialHeaderY + headerHeight + tableHeight + 120
+        scrollView.contentSize = CGSize(width: view.frame.width, height: max(totalContentHeight, scrollView.frame.height + 1))
         
-        // Update scroll view content size
-        scrollView.contentSize = CGSize(
-            width: view.frame.width,
-            height: max(totalContentHeight, scrollView.frame.height + 1)
-        )
-        
-        print("Content Updated: \(songs.count) songs, Table Height: \(tableHeight), Total Height: \(totalContentHeight)")
-        
-      
         self.view.layoutIfNeeded()
     }
 }
@@ -239,13 +384,7 @@ class AlbumDetailViewController: UIViewController {
 // MARK: - MiniPlayerViewDelegate
 extension AlbumDetailViewController: MiniPlayerViewDelegate {
     func miniPlayerDidTapPlayPause() {
-        
-        guard let urlString = currentSongPreviewUrl, !urlString.isEmpty else {
-            print("No song URL available to play")
-            return
-        }
-
-        // Toggle playback
+        guard let urlString = currentSongPreviewUrl, !urlString.isEmpty else { return }
         if isPlaying {
             MusicPlayer.shared.pause()
             miniPlayer.setPlaybackState(isPlaying: false)
@@ -256,53 +395,32 @@ extension AlbumDetailViewController: MiniPlayerViewDelegate {
             isPlaying = true
         }
     }
-
-    
     func miniPlayerDidTapClose() {
         miniPlayer.hide()
         MusicPlayer.shared.pause()
     }
-    
-    func miniPlayerDidTapExpand() {
-    
-    }
-    
-    func miniPlayerDidTapDevice() {
-       
-    }
-    
-    func miniPlayerDidTapCreate() {
-       
-    }
+    func miniPlayerDidTapExpand() {}
+    func miniPlayerDidTapDevice() {}
+    func miniPlayerDidTapCreate() {}
 }
 
-// MARK: - TableView Delegate & DataSource
-extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
+// MARK: - TableView
+extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { songs.count }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return songs.count
-    }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Dequeue cell safely
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "SongCell", for: indexPath) as? SongTableViewCell else {
             return UITableViewCell()
         }
-        
         let song = songs[indexPath.row]
-        
-        // Configure the cell with closure
         cell.configure(with: song) { [weak self] in
             self?.SongOptionsBottomSheet(for: song)
-            // Or call your method: self.didTapMoreButton(for: song)
         }
-        
-        // Additional cell styling
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
-        
         return cell
     }
+    
     private func SongOptionsBottomSheet(for song: Song) {
         let bottomSheet = SongOptions(song: song)
         present(bottomSheet, animated: true, completion: nil)
@@ -310,88 +428,90 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource,
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let song = songs[indexPath.row]
-        
-        // Store current song URL
+        showLyricsPopup(for: song)
         currentSongPreviewUrl = song.previewUrl
         
-        // Configure mini player
         miniPlayer.configure(with: song.imageName, title: song.title, subtitle: song.artist)
         miniPlayer.setPlaybackState(isPlaying: true)
         miniPlayer.show()
         
-        // Play the song
         MusicPlayer.shared.play(urlString: song.previewUrl)
-        
         tableView.deselectRow(at: indexPath, animated: true)
-        isPlaying = true 
+        isPlaying = true
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
-    }
-    
-    // MARK: - Scroll View Delegate
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { 70 }
+}
+
+// MARK: - ScrollView Delegate
+extension AlbumDetailViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Only handle scroll view scrolling
         guard scrollView == self.scrollView else { return }
-        
+
         let scrollOffset = scrollView.contentOffset.y
-        
-        // Shrink/grow header based on scroll
-        let newSize: CGFloat
-        if scrollOffset > 0 {
-            // Scrolling up - shrink the image
-            newSize = max(maxImageSize - scrollOffset, minImageSize)
-        } else {
-            // Scrolling down - stay at max size
-            newSize = maxImageSize
-        }
-        
+        let newSize: CGFloat = scrollOffset > 0 ? max(maxImageSize - scrollOffset, minImageSize) : maxImageSize
         let centerX = view.frame.width / 2
-        
-        // Update frame while keeping it centered
-        albumHeaderContainer.frame = CGRect(
-            x: centerX - newSize/2,
-            y: initialHeaderY,
-            width: newSize,
-            height: newSize
-        )
-        
-        // Update station cell content properly
-        if let stationCell = albumHeaderContainer.subviews.first as? StationCell {
+
+        albumHeaderContainer.frame = CGRect(x: centerX - newSize/2, y: initialHeaderY, width: newSize, height: newSize)
+
+        if let stationCell = albumHeaderContainer.subviews.first(where: { $0 is StationCell }) as? StationCell {
             stationCell.frame = albumHeaderContainer.bounds
-            
-            // Scale the content inside the station cell
             let scale = newSize / maxImageSize
             stationCell.transform = CGAffineTransform(scaleX: scale, y: scale)
-            
-            // Update corner radius to match scale
             stationCell.layer.cornerRadius = 12 * scale
-            
-        } else if let imageView = albumHeaderContainer.subviews.first as? UIImageView {
-            // For regular image view
+        } else if let imageView = albumHeaderContainer.subviews.first(where: { $0 is UIImageView }) as? UIImageView {
             imageView.frame = albumHeaderContainer.bounds
             imageView.layer.cornerRadius = 12 * (newSize / maxImageSize)
         }
-        
-        // Navigation Title
-        if scrollOffset > 50 {
-            UIView.animate(withDuration: 0.2) {
-                self.navigationItem.title = self.albumTitle
-            }
-        } else {
-            UIView.animate(withDuration: 0.2) {
-                self.navigationItem.title = nil
-            }
-        }
 
-        // Search & Sort Bars
-        if scrollOffset < -100 {
+        // Update header back button position (always stay in top-left corner)
+        updateHeaderBackButtonPosition()
+
+        if scrollOffset < -80 {
+            UIView.animate(withDuration: 0.3) {
+                self.navigationController?.setNavigationBarHidden(false, animated: true)
+                self.navigationItem.title = nil
+                self.headerBackButton.alpha = 0 // Hide custom back button when nav bar is visible
+                self.navigationController?.navigationBar.backgroundColor = nil // Clear for search
+            }
             UIView.animate(withDuration: 0.2) {
                 self.Searchbar.alpha = 1
                 self.sortBar.alpha = 1
+                self.SearchHeight.constant = 32
+                self.SortHeight.constant = 31
             }
-        } else if scrollOffset > 0 {
+        } else if scrollOffset <= 0 {
+            UIView.animate(withDuration: 0.3) {
+                self.navigationController?.setNavigationBarHidden(true, animated: true)
+                self.headerBackButton.alpha = 1 // Show custom back button when nav bar is hidden
+            }
+            UIView.animate(withDuration: 0.2) {
+                self.Searchbar.alpha = 0
+                self.sortBar.alpha = 0
+                self.SearchHeight.constant = 0
+                self.SortHeight.constant = 0
+            }
+        } else if scrollOffset > 20 {
+            UIView.animate(withDuration: 0.3) {
+                self.navigationController?.setNavigationBarHidden(false, animated: true)
+                self.navigationItem.title = self.albumTitle
+                self.headerBackButton.alpha = 0 // Hide custom back button when nav bar is visible
+                
+                // Set the navigation bar color to match your album/station
+                if let albumImageName = self.albumImageName,
+                   let image = UIImage(named: albumImageName),
+                   let dominantColor = image.dominantColor() {
+                    self.navigationController?.navigationBar.backgroundColor = dominantColor
+                } else if let _ = self.selectedStation,
+                          let cell = self.albumHeaderContainer.subviews.first(where: { $0 is StationCell }) as? StationCell,
+                          let image = cell.singerImageView.image,
+                          let dominantColor = image.dominantColor() {
+                    self.navigationController?.navigationBar.backgroundColor = dominantColor
+                } else {
+                    // Fallback color
+                    self.navigationController?.navigationBar.backgroundColor = .systemBackground
+                }
+            }
             UIView.animate(withDuration: 0.2) {
                 self.Searchbar.alpha = 0
                 self.sortBar.alpha = 0
