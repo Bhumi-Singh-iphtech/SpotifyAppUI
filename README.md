@@ -87,27 +87,6 @@ This project replicates key features of Spotify’s interface including a **Land
 
 ---
 
-## Screenshots  
-
-### Landing Screen  
-<img width="300" alt="Landing Screen" src="https://github.com/user-attachments/assets/6547914a-1b25-487b-9b8b-6f11e5d9ea08" />
-
-### Home Screen  
-<img width="300" alt="Home Screen" src="https://github.com/user-attachments/assets/6547914a-1b25-487b-9b8b-6f11e5d9ea08" />
-
-### Album Detail Screen  
-<img width="300" alt="Album Detail Screen" src="https://github.com/user-attachments/assets/e8be1a3e-4e46-4009-bac2-abb74553e017" />
-
-### Lyrics Screen  
-<img width="300" alt="Lyrics Screen" src="https://github.com/user-attachments/assets/1493a6e7-4d37-47ed-8eba-ec002ac84674" />
-
----
-
-## Demo Video  
-
-[🎬 Watch Full Demo on ScreenPal](https://go.screenpal.com/watch/cT6u1InFcxM)
-
----
 
 ## Prerequisites  
 - Xcode 12.0 or later  
@@ -135,3 +114,23 @@ If you encounter any problems or have questions, please contact the project main
 ## Acknowledgements  
 Thanks to the **Apple Developer Community** for their frameworks and documentation,  
 which greatly facilitated the development of this project.
+
+---
+
+## Screenshots
+<div style="display: flex; gap: 10px;">
+
+  <img src="https://github.com/user-attachments/assets/6547914a-1b25-487b-9b8b-6f11e5d9ea08" width="250" alt="Home Screen">
+  <img src="https://github.com/user-attachments/assets/e8be1a3e-4e46-4009-bac2-abb74553e017" width="250" alt="Album Detail Screen">
+  <img src="https://github.com/user-attachments/assets/1493a6e7-4d37-47ed-8eba-ec002ac84674" width="250" alt="Lyrics Screen">
+
+</div>
+
+
+---
+
+## Demo Video  
+
+[🎬 Watch Full Demo on ScreenPal](https://go.screenpal.com/watch/cT6u1InFcxM)
+
+---
