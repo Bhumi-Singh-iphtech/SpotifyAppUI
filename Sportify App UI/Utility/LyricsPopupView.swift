@@ -36,7 +36,10 @@ class LyricsPopupView: UIView {
         textView.font = UIFont.systemFont(ofSize: 22, weight: .regular)
         textView.textAlignment = .center
         textView.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 100, right: 20)
-        textView.showsVerticalScrollIndicator = false
+        textView.showsVerticalScrollIndicator = true
+        textView.showsHorizontalScrollIndicator = false
+        textView.bounces = true
+        textView.alwaysBounceVertical = true
         return textView
     }()
     
@@ -98,7 +101,7 @@ class LyricsPopupView: UIView {
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .lightGray
         label.textAlignment = .right
-        label.text = "3:00"
+        label.text = "0:00"
         return label
     }()
     
@@ -125,23 +128,27 @@ class LyricsPopupView: UIView {
         return button
     }()
     
-    private func setBackgroundColorFromSongImage(_ song: Song) { DispatchQueue.global(qos: .background).async {
-        var dominantColor: UIColor = .darkGray
-        if let image = UIImage(named: song.imageName) {
-            if let color = image.dominantColor() ?? image.averageColor() {
-                dominantColor = color }
-            
-        } else if let url = URL(string: song.imageName),
-                  let data = try? Data(contentsOf: url),
-                  let image = UIImage(data: data) {
-            if let color = image.dominantColor() ?? image.averageColor() {
-                dominantColor = color
+    private func setBackgroundColorFromSongImage(_ song: Song) {
+        DispatchQueue.global(qos: .background).async {
+            var dominantColor: UIColor = .darkGray
+            if let image = UIImage(named: song.imageName) {
+                if let color = image.dominantColor() ?? image.averageColor() {
+                    dominantColor = color
+                }
+            } else if let url = URL(string: song.imageName),
+                      let data = try? Data(contentsOf: url),
+                      let image = UIImage(data: data) {
+                if let color = image.dominantColor() ?? image.averageColor() {
+                    dominantColor = color
+                }
+            }
+            DispatchQueue.main.async {
+                UIView.animate(withDuration: 0) {
+                    self.backgroundView.backgroundColor = dominantColor
+                }
             }
         }
-        DispatchQueue.main.async
-        {
-            UIView.animate(withDuration: 0)
-                { self.backgroundView.backgroundColor = dominantColor } } } }
+    }
 
     // Bottom Play Button
     private let playPauseButton: UIButton = {
@@ -165,27 +172,16 @@ class LyricsPopupView: UIView {
     private var displayLink: CADisplayLink?
     private var progress: Float = 0.0
     private var lyricsData: [LyricLine] = []
-    private var totalSongDuration: TimeInterval = 180.0 // default 3 min
+    private var totalSongDuration: TimeInterval = 0.0 
     private var lastScrollLineIndex = -1
+    private var animationStartTime: TimeInterval = 0.0
+    private var elapsedTime: TimeInterval = 0.0
     
     private var progressFillWidthConstraint: NSLayoutConstraint?
     private var progressDotCenterXConstraint: NSLayoutConstraint?
     
     var dismissHandler: (() -> Void)?
     weak var parentViewController: UIViewController?
-    
-    // MARK: - Lyric Data Structure
-    struct LyricLine {
-        let time: TimeInterval
-        let text: String
-        let letters: [LyricLetter]
-    }
-    
-    struct LyricLetter {
-        let character: String
-        let startTime: TimeInterval
-        let duration: TimeInterval
-    }
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -329,8 +325,6 @@ class LyricsPopupView: UIView {
             self.alpha = 1
             self.transform = .identity
         }
-        
-        startProgressAnimation()
     }
     
     func dismiss() {
@@ -350,14 +344,13 @@ class LyricsPopupView: UIView {
         currentSong = song
         songTitleLabel.text = song.title
         artistLabel.text = song.artist
-        totalSongDuration = 180.0
         updateTimeLabels()
         loadLyrics(for: song)
-        setBackgroundColorFromSongImage(song)    }
+        setBackgroundColorFromSongImage(song)
+    }
     
     private func updateTimeLabels() {
-        let currentTime = TimeInterval(progress) * totalSongDuration
-        currentTimeLabel.text = formatTime(currentTime)
+        currentTimeLabel.text = formatTime(elapsedTime)
         totalTimeLabel.text = formatTime(totalSongDuration)
     }
     
@@ -379,36 +372,61 @@ class LyricsPopupView: UIView {
         }
     }
     
+    // MARK: - Display and Prepare Lyrics
     private func displayLyricsWithLetterByLetterHighlighting(_ lyrics: String) {
         let formattedLyrics = lyrics.replacingOccurrences(of: "\r\n", with: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
         let lines = formattedLyrics.components(separatedBy: "\n").filter { !$0.isEmpty }
-        
-        // Calculate timing for each line and letter
-        let lineDuration = totalSongDuration / Double(max(lines.count, 1))
-        
-        lyricsData = lines.enumerated().map { lineIndex, lineText in
-            let lineStartTime = Double(lineIndex) * lineDuration
-            let letters = parseLettersFromLine(lineText, lineStartTime: lineStartTime, lineDuration: lineDuration)
-            return LyricLine(time: lineStartTime, text: lineText, letters: letters)
+
+        let totalLines = lines.count
+        let totalDesiredDuration: TimeInterval = Double(totalLines) * 6.0
+        let lineGap: TimeInterval = 0.2
+        let baseLineDuration = (totalDesiredDuration / Double(totalLines)) - lineGap
+
+        lyricsData = []
+        var currentTime: TimeInterval = 0.9
+
+        for line in lines {
+            let letters = parseLettersFromLine(line, lineStartTime: currentTime, lineDuration: baseLineDuration)
+            let lyricLine = LyricLine(time: currentTime, text: line, letters: letters)
+            lyricsData.append(lyricLine)
+            currentTime += baseLineDuration + lineGap
         }
-        
-        updateLyricsHighlight()
+
+        if let lastLine = lyricsData.last {
+            totalSongDuration = lastLine.time + baseLineDuration + lineGap
+        }
+
+
+        DispatchQueue.main.async {
+            self.progress = 0
+            self.progressFillWidthConstraint?.constant = 0
+            self.updateTimeLabels()
+            if self.isPlaying {
+                self.startProgressAnimation()
+            }
+        }
     }
+
     
     private func parseLettersFromLine(_ line: String, lineStartTime: TimeInterval, lineDuration: TimeInterval) -> [LyricLetter] {
-        // Remove extra spaces and split into characters
+        
         let cleanedLine = line.replacingOccurrences(of: " +", with: " ", options: .regularExpression)
         let characters = Array(cleanedLine)
         
         var lyricLetters: [LyricLetter] = []
-        let letterDuration = lineDuration / Double(max(characters.count, 1))
+        
+        let baseLetterDuration: TimeInterval = 0.35
+        _ = Double(characters.count) * baseLetterDuration
+        
+        let actualLetterDuration = min(baseLetterDuration, lineDuration / Double(characters.count))
+        
         var currentTime = lineStartTime
         
         for character in characters {
             let charString = String(character)
-            let lyricLetter = LyricLetter(character: charString, startTime: currentTime, duration: letterDuration)
+            let lyricLetter = LyricLetter(character: charString, startTime: currentTime, duration: actualLetterDuration)
             lyricLetters.append(lyricLetter)
-            currentTime += letterDuration
+            currentTime += actualLetterDuration
         }
         
         return lyricLetters
@@ -416,26 +434,26 @@ class LyricsPopupView: UIView {
     
     private func updateLyricsHighlight() {
         guard !lyricsData.isEmpty else { return }
-        
-        let currentTime = TimeInterval(progress) * totalSongDuration
+
+        let highlightDelay: TimeInterval = 2.5
+        let adjustedTime = max(0, elapsedTime - highlightDelay)
+
         let attributedText = NSMutableAttributedString()
         var currentLineIndex = -1
-        
+
         for (lineIndex, line) in lyricsData.enumerated() {
-            let isLineActive = currentTime >= line.time
-            
-            // Build attributed string for the line with letter-by-letter highlighting
-            let lineAttributedString = createHighlightedLineString(line: line, currentTime: currentTime)
+            let isLineActive = adjustedTime >= line.time
+            let lineAttributedString = createHighlightedLineString(line: line, currentTime: adjustedTime)
             attributedText.append(lineAttributedString)
             attributedText.append(NSAttributedString(string: "\n\n"))
-            
+
             if isLineActive {
                 currentLineIndex = lineIndex
             }
         }
-        
+
         lyricsTextView.attributedText = attributedText
-        
+
         if currentLineIndex >= 0 && currentLineIndex != lastScrollLineIndex {
             lastScrollLineIndex = currentLineIndex
             scrollToLine(currentLineIndex)
@@ -445,31 +463,31 @@ class LyricsPopupView: UIView {
     private func createHighlightedLineString(line: LyricLine, currentTime: TimeInterval) -> NSAttributedString {
         let lineAttributedString = NSMutableAttributedString()
         
-        for (_, letter) in line.letters.enumerated() {
+        for letter in line.letters {
             let isLetterHighlighted = currentTime >= letter.startTime && currentTime <= letter.startTime + letter.duration
             let isLetterCompleted = currentTime > letter.startTime + letter.duration
             
             let letterAttributes: [NSAttributedString.Key: Any]
             
+            let font = UIFont.systemFont(ofSize: 22, weight: .regular)
+
             if isLetterHighlighted {
-                // Currently highlighting this letter
                 letterAttributes = [
                     .foregroundColor: UIColor.white,
-                    .font: UIFont.systemFont(ofSize: 22, weight: .bold)
+                    .font: font
                 ]
             } else if isLetterCompleted {
-                // Letter has been completed
                 letterAttributes = [
                     .foregroundColor: UIColor.white,
-                    .font: UIFont.systemFont(ofSize: 22, weight: .regular)
+                    .font: font
                 ]
             } else {
-                // Letter hasn't been reached yet
                 letterAttributes = [
-                    .foregroundColor: UIColor.white.withAlphaComponent(0.5),
-                    .font: UIFont.systemFont(ofSize: 22, weight: .regular)
+                    .foregroundColor: UIColor.white.withAlphaComponent(0.4),
+                    .font: font
                 ]
             }
+
             
             let letterString = NSAttributedString(string: letter.character, attributes: letterAttributes)
             lineAttributedString.append(letterString)
@@ -478,22 +496,85 @@ class LyricsPopupView: UIView {
         return lineAttributedString
     }
     
+    // FIXED SCROLL METHOD - More precise and slower scrolling
     private func scrollToLine(_ lineIndex: Int) {
         guard lineIndex < lyricsData.count else { return }
-        let text = lyricsTextView.attributedText ?? NSAttributedString(string: "")
-        let lines = text.string.components(separatedBy: "\n\n")
-        var location = 0
-        for i in 0..<lineIndex { location += lines[i].count + 2 }
-        let range = NSRange(location: location, length: lines[lineIndex].count)
+        
+        // Ensure the text view has laid out its content
+        lyricsTextView.layoutIfNeeded()
+        
+        // Calculate the character position of the target line
+        var characterPosition = 0
+        for (index, line) in lyricsData.enumerated() {
+            if index == lineIndex {
+                break
+            }
+            characterPosition += line.text.count + 2 // +2 for the "\n\n"
+        }
+        
+        // Get the text container and layout manager
         let layoutManager = lyricsTextView.layoutManager
         let textContainer = lyricsTextView.textContainer
-        let glyphRange = layoutManager.glyphRange(forCharacterRange: range, actualCharacterRange: nil)
-        let rect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
-        let visibleHeight = lyricsTextView.bounds.height
-        let targetOffset = max(min(rect.origin.y - visibleHeight * 0.3, lyricsTextView.contentSize.height - visibleHeight), 0)
         
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut, .allowUserInteraction]) {
-            self.lyricsTextView.contentOffset.y = targetOffset
+        // Get the glyph range for the target line
+        let characterRange = NSRange(location: characterPosition, length: lyricsData[lineIndex].text.count)
+        let glyphRange = layoutManager.glyphRange(forCharacterRange: characterRange, actualCharacterRange: nil)
+        
+        // Get the bounding rect of the target line
+        let lineRect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+        
+        // Calculate target offset to center the line in the visible area
+        let targetOffset = max(0, lineRect.midY - lyricsTextView.bounds.height / 2)
+        
+        // Ensure we don't scroll beyond content
+        let maxOffset = max(0, lyricsTextView.contentSize.height - lyricsTextView.bounds.height)
+        let clampedOffset = min(targetOffset, maxOffset)
+        
+        // Use slower animation with better curve
+        UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: [.curveEaseInOut, .allowUserInteraction]) {
+            self.lyricsTextView.contentOffset.y = clampedOffset
+        }
+    }
+
+    // Alternative simpler method if you want even smoother scrolling
+    private func scrollToLineSmooth(_ lineIndex: Int) {
+        guard lineIndex < lyricsData.count else { return }
+        
+        lyricsTextView.layoutIfNeeded()
+        
+        // Use more realistic line height calculation
+        let lineHeight: CGFloat = 45 // Increased for better spacing
+        let lineSpacing: CGFloat = 25 // Increased spacing
+        
+        // Calculate target position with slower progression
+        let targetOffset = CGFloat(lineIndex) * (lineHeight + lineSpacing)
+        
+        // Ensure we don't scroll beyond content
+        let maxOffset = max(0, lyricsTextView.contentSize.height - lyricsTextView.bounds.height)
+        let clampedOffset = min(max(0, targetOffset), maxOffset)
+        
+        // Slower animation with spring effect
+        UIView.animate(withDuration: 1.2, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.3, options: [.curveEaseInOut, .allowUserInteraction]) {
+            self.lyricsTextView.contentOffset.y = clampedOffset
+        }
+    }
+
+    // Even simpler method for very smooth scrolling
+    private func scrollToLineSimple(_ lineIndex: Int) {
+        guard lineIndex < lyricsData.count else { return }
+        
+        lyricsTextView.layoutIfNeeded()
+        
+        // Calculate based on actual content height divided by number of lines
+        let averageLineHeight = lyricsTextView.contentSize.height / CGFloat(max(lyricsData.count, 1))
+        let targetOffset = CGFloat(lineIndex) * averageLineHeight
+        
+        let maxOffset = max(0, lyricsTextView.contentSize.height - lyricsTextView.bounds.height)
+        let clampedOffset = min(max(0, targetOffset), maxOffset)
+        
+        // Smooth linear animation
+        UIView.animate(withDuration: 1.0, delay: 0, options: [.curveLinear, .allowUserInteraction]) {
+            self.lyricsTextView.contentOffset.y = clampedOffset
         }
     }
     
@@ -502,31 +583,75 @@ class LyricsPopupView: UIView {
         lyricsTextView.textAlignment = .center
         lyricsTextView.textColor = .white
         lyricsTextView.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        
+        // Set a default duration when no lyrics are found
+        totalSongDuration = 180.0
+        updateTimeLabels()
     }
     
     // MARK: - Progress Animation
+    private func resetProgress() {
+        progress = 0.0
+        elapsedTime = 0.0
+        animationStartTime = Date().timeIntervalSinceReferenceDate
+        progressFillWidthConstraint?.constant = 0
+        updateTimeLabels()
+    }
+    
     private func startProgressAnimation() {
         displayLink?.invalidate()
+        animationStartTime = Date().timeIntervalSinceReferenceDate - elapsedTime
         displayLink = CADisplayLink(target: self, selector: #selector(updateProgress))
         displayLink?.add(to: .main, forMode: .common)
     }
     
     @objc private func updateProgress() {
         guard isPlaying else { return }
-        let incrementPerFrame = 1.0 / (60.0 * totalSongDuration) // 60 FPS
-        progress += Float(incrementPerFrame)
-        if progress > 1.0 { progress = 1.0; displayLink?.invalidate() }
+
+        // Calculate elapsed time based on actual time passed
+        let currentTime = Date().timeIntervalSinceReferenceDate
+        elapsedTime = currentTime - animationStartTime
+        
+        // Calculate progress based on elapsed time and total duration
+        if totalSongDuration > 0 {
+            progress = Float(elapsedTime / totalSongDuration)
+        } else {
+            progress = 0.0
+        }
+
+        // Check if we've reached the end
+        if elapsedTime >= totalSongDuration {
+            elapsedTime = totalSongDuration
+            progress = 1.0
+            displayLink?.invalidate()
+            isPlaying = false
+            playPauseButton.isSelected = true
+        }
+
+        // Update progress bar position
         progressFillWidthConstraint?.constant = progressContainer.frame.width * CGFloat(progress)
+        progressDotCenterXConstraint?.isActive = true
+
+        // Update time labels
         updateTimeLabels()
+
+        // Update lyrics highlighting
         updateLyricsHighlight()
+        
         self.layoutIfNeeded()
     }
-    
+
     // MARK: - Actions
     @objc private func closeTapped() { dismiss() }
+    
     @objc private func playPauseTapped() {
         isPlaying.toggle()
         playPauseButton.isSelected = !isPlaying
-        if isPlaying { startProgressAnimation() } else { displayLink?.invalidate() }
+        if isPlaying {
+            startProgressAnimation()
+        } else {
+            displayLink?.invalidate()
+        }
     }
+    
 }

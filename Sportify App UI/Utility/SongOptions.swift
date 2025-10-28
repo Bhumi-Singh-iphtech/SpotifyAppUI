@@ -1,6 +1,19 @@
 import UIKit
 
 class SongOptions: UIViewController {
+    let options: [(iconName: String, title: String, isPremium: Bool, spotifyText: String?)] = [
+            ("share (1)", "Share", false, nil),
+            ("liked-songs", "Add to liked Songs", false, nil),
+            ("circle", "Add to other playlist", false, nil),
+            ("diamond (2)", "Listen to music ad-free", true, "Spotify"),
+            ("minus", "Remove from this playlist", false, nil),
+            ("dot-inside-a-circle", "Go to album", false, nil),
+            ("artist", "Go to artist", false, nil),
+            ("user", "Start a Jam", true, "Spotify"),
+            ("antenna", "Go to song radio", false, nil),
+            ("music-notes", "View song credits", false, nil),
+            ("sound (1)", "Show Spotify Code", false, nil)
+        ]
 
     private let song: Song
     private let containerView = UIView()
@@ -131,47 +144,50 @@ class SongOptions: UIViewController {
 
         contentStack.addArrangedSubview(headerStack)
 
-        let options: [(iconName: String, title: String, isPremium: Bool, spotifyText: String?)] = [
-                ("share (1)", "Share", false, nil),
-                ("circle", "Add to other playlist", false, nil),
-                ("diamond (2)", "Listen to music ad-free", true, "Spotify"),
-                ("minus", "Remove from this playlist", false, nil),
-                ("dot-inside-a-circle", "Go to album", false, nil),
-                ("artist", "Go to artist", false, nil),
-                ("user", "Start a Jam", true, "Spotify"),
-                ("antenna", "Go to song radio", false, nil),
-                ("music-notes", "View song credits", false, nil),
-                ("sound (1)", "Show Spotify Code", false, nil)
-            ]
-
+       
         for (index, option) in options.enumerated() {
             let button = UIButton(type: .system)
             button.tintColor = .white
             button.contentHorizontalAlignment = .left
             button.tag = index
             button.addTarget(self, action: #selector(optionTapped(_:)), for: .touchUpInside)
-
-            // Set main icon
-            let iconImageView = UIImageView(image: UIImage(named: option.iconName))
+            
+            // Create the icon
+            let iconImageView = UIImageView()
             iconImageView.translatesAutoresizingMaskIntoConstraints = false
             iconImageView.contentMode = .scaleAspectFit
+            
+    
+            if option.title == "Add to liked Songs" {
+                if LikedSongsManager.shared.isLiked(song) {
+                    iconImageView.image = UIImage(systemName: "heart.fill")
+                    iconImageView.tintColor = .systemGreen
+                } else {
+                    iconImageView.image = UIImage(systemName: "heart")
+                    iconImageView.tintColor = .white
+                }
+            } else {
+               
+                iconImageView.image = UIImage(named: option.iconName)
+            }
+            
             button.addSubview(iconImageView)
-
-            // Constraints to position icon on the left
+            
+            // Icon constraints
             NSLayoutConstraint.activate([
                 iconImageView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 5),
                 iconImageView.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-                iconImageView.widthAnchor.constraint(equalToConstant: 20),   // width
-                iconImageView.heightAnchor.constraint(equalToConstant: 20)   // height
+                iconImageView.widthAnchor.constraint(equalToConstant: 20),
+                iconImageView.heightAnchor.constraint(equalToConstant: 20)
             ])
-
-            // Set title
+            
+            // Title setup
             button.setTitle(option.title, for: .normal)
             button.setTitleColor(.white, for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 16,weight: .semibold)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
             button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 35, bottom: 0, right: 0)
-
-            // Add PREMIUM label and Spotify icon for premium options
+            
+            // Premium badge (if needed)
             if option.isPremium {
                 let premiumLabel = UILabel()
                 premiumLabel.text = "Premium"
@@ -179,32 +195,55 @@ class SongOptions: UIViewController {
                 premiumLabel.textColor = .systemGreen
                 premiumLabel.translatesAutoresizingMaskIntoConstraints = false
                 button.addSubview(premiumLabel)
-
-                // Spotify icon
+                
                 let spotifyImageView = UIImageView(image: UIImage(named: "spotify"))
                 spotifyImageView.translatesAutoresizingMaskIntoConstraints = false
                 spotifyImageView.contentMode = .scaleAspectFit
                 button.addSubview(spotifyImageView)
-
-                // Constraints to put icon + text at the far right
+                
                 NSLayoutConstraint.activate([
-                    // PREMIUM label pinned to the far right
                     premiumLabel.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
                     premiumLabel.centerYAnchor.constraint(equalTo: button.centerYAnchor),
                     
-                    // Spotify icon to the left of PREMIUM label
                     spotifyImageView.trailingAnchor.constraint(equalTo: premiumLabel.leadingAnchor, constant: -4),
                     spotifyImageView.centerYAnchor.constraint(equalTo: button.centerYAnchor),
                     spotifyImageView.widthAnchor.constraint(equalToConstant: 16),
                     spotifyImageView.heightAnchor.constraint(equalToConstant: 16)
                 ])
-
             }
-
+            
             contentStack.addArrangedSubview(button)
         }
-
     }
+        @objc private func optionTapped(_ sender: UIButton) {
+            guard sender.tag < options.count else { return }
+            let selectedOption = options[sender.tag]
+            
+            if selectedOption.title == "Add to liked Songs" {
+                toggleLikedSong(for: sender)
+            } else {
+                dismissSheet()
+            }
+        }
+    private func toggleLikedSong(for sender: UIButton) {
+        guard let iconImageView = sender.subviews.compactMap({ $0 as? UIImageView }).first else { return }
+        
+        if LikedSongsManager.shared.isLiked(song) {
+            // Unlike
+            LikedSongsManager.shared.removeSong(song)
+            iconImageView.image = UIImage(systemName: "heart")
+            iconImageView.tintColor = .white
+        } else {
+            // Like
+            LikedSongsManager.shared.addSong(song)
+            iconImageView.image = UIImage(systemName: "heart.fill")
+            iconImageView.tintColor = .systemGreen
+        }
+        
+        // Notify LikedSongsViewController to update count
+        NotificationCenter.default.post(name: .likedSongsUpdated, object: nil)
+    }
+
     // MARK: - Pan Gesture (ADD THIS MISSING METHOD)
     private func setupPanGesture() {
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
@@ -281,10 +320,11 @@ class SongOptions: UIViewController {
             self.dismiss(animated: false)
         }
     }
+    
 
-    @objc private func optionTapped(_ sender: UIButton) {
-        print("Tapped option at index \(sender.tag)")
-        // Handle option selection here
-        dismissSheet()
-    }
+    
+
+}
+extension Notification.Name {
+    static let likedSongsUpdated = Notification.Name("likedSongsUpdated")
 }

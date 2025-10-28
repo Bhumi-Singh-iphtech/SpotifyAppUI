@@ -15,11 +15,11 @@
             <objects>
                 <viewController storyboardIdentifier="AlbumDetailViewController" id="kxv-rM-Bbk" customClass="AlbumDetailViewController" customModule="Sportify_App_UI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="syH-hL-dvf">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FoI-IA-tjw">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0QA-6k-sIJ">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="898"/>
@@ -355,6 +355,7 @@
                             <constraint firstItem="FoI-IA-tjw" firstAttribute="top" secondItem="syH-hL-dvf" secondAttribute="top" id="zIA-K7-FAT"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="pWJ-Ex-d68"/>
                     <connections>
                         <outlet property="SearchHeight" destination="kWu-jg-WzE" id="cfC-H4-TAg"/>
                         <outlet property="Searchbar" destination="qK9-rG-XVd" id="7CV-3A-Vsr"/>
@@ -470,7 +471,7 @@
                                                 </cells>
                                             </collectionView>
                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="fO7-5u-DIp">
-                                                <rect key="frame" x="3" y="214" width="395" height="216"/>
+                                                <rect key="frame" x="8" y="214" width="390" height="216"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="216" id="fXO-ul-53C"/>
@@ -569,7 +570,7 @@
                                                 </cells>
                                             </collectionView>
                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="CXR-PY-oam">
-                                                <rect key="frame" x="4" y="471" width="401" height="175"/>
+                                                <rect key="frame" x="8" y="471" width="397" height="175"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="175" id="wmE-oP-qep"/>
@@ -666,9 +667,9 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="download" translatesAutoresizingMaskIntoConstraints="NO" id="csI-QO-Vq8">
-                                                <rect key="frame" x="2" y="665" width="45" height="45"/>
+                                                <rect key="frame" x="7" y="665" width="44" height="45"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="45" id="IbI-yo-y5R"/>
+                                                    <constraint firstAttribute="width" constant="44" id="IbI-yo-y5R"/>
                                                     <constraint firstAttribute="height" constant="45" id="tpt-9N-695"/>
                                                 </constraints>
                                                 <userDefinedRuntimeAttributes>
@@ -712,13 +713,13 @@
                                             <constraint firstItem="Spx-uK-Emb" firstAttribute="leading" secondItem="irB-9v-3oe" secondAttribute="leading" constant="3" id="P3x-qU-zuM"/>
                                             <constraint firstAttribute="trailing" secondItem="fxb-AC-mGj" secondAttribute="trailing" id="YoQ-H4-vJa"/>
                                             <constraint firstItem="CXR-PY-oam" firstAttribute="top" secondItem="Oup-NH-9hr" secondAttribute="bottom" constant="7" id="aGZ-km-PVg"/>
-                                            <constraint firstItem="fO7-5u-DIp" firstAttribute="leading" secondItem="irB-9v-3oe" secondAttribute="leading" constant="3" id="agw-O4-fXw"/>
+                                            <constraint firstItem="fO7-5u-DIp" firstAttribute="leading" secondItem="irB-9v-3oe" secondAttribute="leading" constant="8" id="agw-O4-fXw"/>
                                             <constraint firstAttribute="trailing" secondItem="fO7-5u-DIp" secondAttribute="trailing" constant="16" id="b0W-4B-CoE"/>
                                             <constraint firstItem="fO7-5u-DIp" firstAttribute="top" secondItem="Spx-uK-Emb" secondAttribute="bottom" constant="7" id="i6w-9M-8Is"/>
                                             <constraint firstItem="Spx-uK-Emb" firstAttribute="top" secondItem="fxb-AC-mGj" secondAttribute="bottom" constant="13" id="iCl-wY-AlS"/>
-                                            <constraint firstItem="CXR-PY-oam" firstAttribute="leading" secondItem="irB-9v-3oe" secondAttribute="leading" constant="4" id="jTN-i1-PIP"/>
+                                            <constraint firstItem="CXR-PY-oam" firstAttribute="leading" secondItem="irB-9v-3oe" secondAttribute="leading" constant="8" id="jTN-i1-PIP"/>
                                             <constraint firstItem="csI-QO-Vq8" firstAttribute="top" secondItem="CXR-PY-oam" secondAttribute="bottom" constant="19" id="lJF-an-a2f"/>
-                                            <constraint firstItem="csI-QO-Vq8" firstAttribute="leading" secondItem="irB-9v-3oe" secondAttribute="leading" constant="2" id="vF0-9a-dOP"/>
+                                            <constraint firstItem="csI-QO-Vq8" firstAttribute="leading" secondItem="irB-9v-3oe" secondAttribute="leading" constant="7" id="vF0-9a-dOP"/>
                                             <constraint firstItem="jJj-Me-25t" firstAttribute="top" secondItem="CXR-PY-oam" secondAttribute="bottom" constant="23" id="vg1-iN-KrA"/>
                                             <constraint firstItem="4lS-xT-i3J" firstAttribute="top" secondItem="CXR-PY-oam" secondAttribute="bottom" constant="39" id="xq2-92-WdP"/>
                                         </constraints>
@@ -861,7 +862,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="QlD-IN-drv"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="labelColor"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="aiE-B5-i00">
                         <imageReference key="image" image="magnifyingglass" catalog="system" symbolScale="large"/>
@@ -892,19 +893,40 @@
             </objects>
             <point key="canvasLocation" x="2207.2463768115945" y="-46.875"/>
         </scene>
-        <!--Premium-->
+        <!--Favourites-->
         <scene sceneID="qoX-as-F6F">
             <objects>
-                <viewController id="1Qb-X9-sPh" sceneMemberID="viewController">
+                <viewController id="1Qb-X9-sPh" customClass="LikedSongViewController" customModule="Sportify_App_UI" customModuleProvider="target" sceneMemberID="viewController">
+                    <string key="storyboardIdentifier">LikedSongViewController
+</string>
                     <view key="view" contentMode="scaleToFill" id="mg9-aD-Q6p">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="448,270 saves" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fpJ-5e-V1e">
+                                <rect key="frame" x="38" y="79" width="361" height="79"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="79" id="fdG-QP-dR1"/>
+                                    <constraint firstAttribute="width" constant="361" id="oP3-ut-clz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="awu-nL-VyY"/>
                         <color key="backgroundColor" systemColor="labelColor"/>
+                        <constraints>
+                            <constraint firstItem="fpJ-5e-V1e" firstAttribute="leading" secondItem="mg9-aD-Q6p" secondAttribute="leading" constant="38" id="bmY-Cs-dDi"/>
+                            <constraint firstItem="fpJ-5e-V1e" firstAttribute="top" secondItem="mg9-aD-Q6p" secondAttribute="top" constant="79" id="ei3-d0-3ag"/>
+                        </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Premium" image="spotify-logo" id="wOf-HQ-I1M">
+                    <tabBarItem key="tabBarItem" title="Favourites" image="spotify-logo" id="wOf-HQ-I1M">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
+                    <connections>
+                        <outlet property="countLabel" destination="fpJ-5e-V1e" id="crM-Yo-aic"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jyF-Y2-3d0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -971,6 +993,7 @@
                     <nil name="viewControllers"/>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="fvI-cJ-DFK"/>
+                        <segue destination="kxv-rM-Bbk" kind="show" id="MrY-45-K7s"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Aej-Wd-QUe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

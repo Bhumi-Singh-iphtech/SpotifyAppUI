@@ -1,33 +1,4 @@
 import Foundation
-
-// MARK: - Genius API Models
-struct GeniusSearchResponse: Codable {
-    let response: GeniusResponse?
-}
-
-struct GeniusResponse: Codable {
-    let hits: [GeniusHit]?
-}
-
-struct GeniusHit: Codable {
-    let result: GeniusSongResult
-}
-
-struct GeniusSongResult: Codable {
-    let title: String
-    let primary_artist: GeniusArtist
-    let path: String
-    
-    struct GeniusArtist: Codable {
-        let name: String
-    }
-}
-
-// MARK: - Lyrics.ovh Model
-struct LyricsOvhResponse: Codable {
-    let lyrics: String?
-}
-
 // MARK: - Lyrics API Manager
 class LyricsAPIManager {
     static let shared = LyricsAPIManager()
@@ -71,7 +42,7 @@ class LyricsAPIManager {
         request.timeoutInterval = 15
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
+            if error != nil {
                 completion(nil)
                 return
             }
@@ -141,7 +112,7 @@ class LyricsAPIManager {
         request.setValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36", forHTTPHeaderField: "User-Agent")
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
+            if error != nil {
                 completion(nil)
                 return
             }
@@ -236,7 +207,7 @@ class LyricsAPIManager {
         request.timeoutInterval = 10
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
+            if error != nil {
                 completion(nil)
                 return
             }

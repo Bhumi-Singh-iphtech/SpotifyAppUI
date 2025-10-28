@@ -8,7 +8,7 @@ struct MusicDataManager {
         LibraryItem(title: "Workout", imageName: "Workout", totalDuration: "• 35 min"),
         LibraryItem(title: "Chill Vibes", imageName: "Chill Vibes", totalDuration: "• 35 min"),
         LibraryItem(title: "Focus Beats", imageName: "Focus music", totalDuration: "• 35 min"),
-        LibraryItem(title: "Liked Songs", imageName: "liked-songs", totalDuration: "• 35 min")
+        LibraryItem(title: "Pop Songs", imageName: "pop ", totalDuration: "• 35 min")
     ]
     
     static let stations: [Station] = [

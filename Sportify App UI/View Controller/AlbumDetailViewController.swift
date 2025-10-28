@@ -425,6 +425,8 @@ extension AlbumDetailViewController: UITableViewDelegate, UITableViewDataSource 
         let bottomSheet = SongOptions(song: song)
         present(bottomSheet, animated: true, completion: nil)
     }
+    
+
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let song = songs[indexPath.row]
