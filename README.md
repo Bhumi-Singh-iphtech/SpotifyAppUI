@@ -119,12 +119,13 @@ which greatly facilitated the development of this project.
 
 ## Screenshots
 <div style="display: flex; gap: 10px;">
-
+  <img width="1284" height="2778" alt="Landing Screen" src="https://github.com/user-attachments/assets/33a18ad3-0941-4cdb-8366-b797df34dc65">
   <img src="https://github.com/user-attachments/assets/6547914a-1b25-487b-9b8b-6f11e5d9ea08" width="250" alt="Home Screen">
   <img src="https://github.com/user-attachments/assets/e8be1a3e-4e46-4009-bac2-abb74553e017" width="250" alt="Album Detail Screen">
   <img src="https://github.com/user-attachments/assets/1493a6e7-4d37-47ed-8eba-ec002ac84674" width="250" alt="Lyrics Screen">
-
+  <img src="https://github.com/user-attachments/assets/212f21a6-b6a6-486a-bc88-719a91460979" width="250" alt="Song Bottom Sheet">
 </div>
+
 
 
 ---
